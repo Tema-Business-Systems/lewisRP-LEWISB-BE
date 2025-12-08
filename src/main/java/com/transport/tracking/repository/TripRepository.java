@@ -36,33 +36,38 @@ public interface TripRepository extends CrudRepository<Trip, BigDecimal> {
     public Trip findByTripCode(String tripCode);
 
 
-    @Query(value="select top 1 * from TMSMRCH.XX10TRIPS c where c.CODE = :veh and c.DOCDATE <= :date ORDER BY c.DOCDATE DESC,c.TRIPS DESC ",nativeQuery = true)
+    @Query(value="select top 1 * from LEWISB.XX10TRIPS c where c.CODE = :veh and c.DOCDATE <= :date ORDER BY c.DOCDATE DESC,c.TRIPS DESC ",nativeQuery = true)
    public Trip findLatestDepartSites(@Param("veh") String veh,@Param("date") Date date);
 
-    @Query(value="select distinct c.CODE,c.DOCDATE,c.ROWID from TMSMRCH.XX10TRIPS c where c.SITE = ?1 and (c.DOCDATE between ?2 AND ?3)",nativeQuery = true)
+    @Query(value="select distinct c.CODE,c.DOCDATE,c.ROWID from LEWISB.XX10TRIPS c where c.SITE = ?1 and (c.DOCDATE between ?2 AND ?3)",nativeQuery = true)
     public List<Trip> getCodeAndDocdateOnly(String veh,Date sdate,Date edate);
 
 
-    @Query("select DISTINCT new com.transport.tracking.response.ResultTripVO(c.code,GETDATE()) from  Trip c where c.site = ?1 and (c.docdate between ?2 AND ?3)")
+//    @Query("select DISTINCT new com.transport.tracking.response.ResultTripVO(c.code,GETDATE()) from  Trip c where c.site = ?1 and (c.docdate between ?2 AND ?3)")
+//    public List<ResultTripVO> getcustomCodeAndDocdateOnly(String veh, Date sdate, Date edate);
+    @Query("SELECT DISTINCT new com.transport.tracking.response.ResultTripVO(c.code, CURRENT_DATE) " +
+        "FROM Trip c " +
+        "WHERE c.site = ?1 AND c.docdate BETWEEN ?2 AND ?3")
     public List<ResultTripVO> getcustomCodeAndDocdateOnly(String veh, Date sdate, Date edate);
+
 
     @Query(value="select c from  Trip c where c.code = ?1 and c.docdate = CAST(?2 as timestamp without time zone) order by trips",nativeQuery = true)
     public List<Trip> getTripsByCodeAndDocdate1(String veh,String docdate);
 
-  @Query(value="select * from TMSMRCH.XX10TRIPS c where c.SITE IN (?1) and (c.DOCDATE between ?2 AND ?3)",nativeQuery = true)
+  @Query(value="select * from LEWISB.XX10TRIPS c where c.SITE IN (?1) and (c.DOCDATE between ?2 AND ?3)",nativeQuery = true)
     public List<Trip> getTripswithRangeAndSite(List<String> site,Date sdate,Date edate);
 
 
 
-    @Query(value="select * from TMSMRCH.XX10TRIPS c where c.CODE = ?1 and c.DOCDATE = ?2 ORDER BY c.TRIPS",nativeQuery = true)
+    @Query(value="select * from LEWISB.XX10TRIPS c where c.CODE = ?1 and c.DOCDATE = ?2 ORDER BY c.TRIPS",nativeQuery = true)
     public List<Trip> getTripsByCodeAndDocdate(String veh,Date date);
 
 
 
-    @Query(value="select * from TMSMRCH.XX10TRIPS c where c.TRIPCODE LIKE 'VR-%' ORDER BY c.TRIPCODE",nativeQuery = true)
+    @Query(value="select * from LEWISB.XX10TRIPS c where c.TRIPCODE LIKE 'VR-%' ORDER BY c.TRIPCODE",nativeQuery = true)
     public List<Trip> getVRTripcode();
 
-    @Query(value = "SELECT COUNT(*) FROM TMSMRCH.XX10TRIPS WHERE CODE = :code AND CAST(DOCDATE AS DATE) = CAST(:docDate AS DATE)", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM LEWISB.XX10TRIPS WHERE CODE = :code AND CAST(DOCDATE AS DATE) = CAST(:docDate AS DATE)", nativeQuery = true)
     int countByCodeAndDocdate(@Param("code") String code, @Param("docDate") Date docDate);
 
 

@@ -15,7 +15,7 @@ public interface VehDriverRepository extends CrudRepository<VehDriver, String> {
     public List<VehDriver> findAll();
 
 
-    @Query(value="select TOP 1 * from TMSMRCH.XX10CALLOC c where c.XVEHICLE_0 = :veh and (XSTRTDAT_0 <= :dte  AND XENDDAT_0 >= :dte) ",nativeQuery = true)
+    @Query(value="select TOP 1 * from LEWISB.XX10CALLOC c where c.XVEHICLE_0 = :veh and (XSTRTDAT_0 <= :dte  AND XENDDAT_0 >= :dte) ",nativeQuery = true)
     public VehDriver findDriverbyVehicleandDate(@Param("veh") String veh, @Param("dte") String dte);
 
 

@@ -14,10 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class TrackingService {
         return new ArrayList<>();
     }
 
-    public List<VehLiveTrack> listTransports(String site,String date, Boolean active) {
+    public List<VehLiveTrack> listTransports(String site, Date date, Boolean active) {
         log.info("Transport service is loaded...");
         List<VehLiveTrack> vehicleList = null;
 
@@ -143,7 +144,7 @@ public class TrackingService {
         return new ArrayList<>();
     }
 
-    public List<DocReportTrack> listDocuments(String site,String date, Boolean active) {
+    public List<DocReportTrack> listDocuments(String site,Date date, Boolean active) {
         log.info("Transport service is loaded...");
         List<DocReportTrack> vehicleList = null;
 

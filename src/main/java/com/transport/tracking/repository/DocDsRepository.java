@@ -14,7 +14,7 @@ public interface DocDsRepository extends CrudRepository<DocDs, String> {
 
     public List<DocDs> findByDocnum(String docnum);
 
-    @Query(value="select * from TMSMRCH.XSCHDOCSD c where c.DOCNUM = ?1 ",nativeQuery = true)
+    @Query(value="select * from LEWISB.XSCHDOCSD c where c.DOCNUM = ?1 ",nativeQuery = true)
     public List<DocDs> getprodsbyDocnum(String docnum);
 
 

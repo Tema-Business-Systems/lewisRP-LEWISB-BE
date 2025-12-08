@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -42,7 +43,7 @@ public class TrackingController {
 
     @GetMapping("/livevehbysiteanddate")
     public List<VehLiveTrack> getVehiclesBySiteAndDate(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) String site,
-                                                       @RequestParam(name = "date",required = false) String date,
+                                                       @RequestParam(name = "date",required = false) Date date,
                                           @RequestParam(name = "active", required = false) Boolean active){
         return trackingService.listTransports(site,date, active);
     }
@@ -71,7 +72,7 @@ public class TrackingController {
 
     @GetMapping("/livedocsbysiteanddate")
     public List<DocReportTrack> getDocumentsBySiteAndDate(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) String site,
-                                                               @RequestParam(name = "date",required = false) String date,
+                                                               @RequestParam(name = "date",required = false) Date date,
                                                                @RequestParam(name = "active", required = false) Boolean active){
         return trackingService.listDocuments(site,date, active);
     }

@@ -4,7 +4,7 @@ package com.transport.tracking.response;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import java.math.BigDecimal;
 import java.util.List;
 

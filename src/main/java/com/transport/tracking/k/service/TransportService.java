@@ -4,12 +4,10 @@
     import com.transport.tracking.model.*;
     import org.apache.commons.lang3.StringUtils;
     import org.json.JSONArray;
-    import org.json.JSONException;
     import org.json.JSONObject;
     import com.transport.tracking.repository.*;
     import com.transport.tracking.response.*;
     import lombok.extern.slf4j.Slf4j;
-    import org.apache.commons.exec.util.MapUtils;
     import org.apache.commons.lang3.time.DateUtils;
     import org.hibernate.query.NativeQuery;
     import org.springframework.beans.BeanUtils;
@@ -24,8 +22,8 @@
 
     import java.util.TimeZone;
 
-    import javax.persistence.*;
-    import javax.transaction.Transactional;
+    import jakarta.persistence.*;
+    import jakarta.transaction.Transactional;
     import java.math.BigDecimal;
     import java.text.MessageFormat;
     import java.text.ParseException;

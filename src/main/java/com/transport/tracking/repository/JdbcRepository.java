@@ -51,7 +51,7 @@ public class JdbcRepository {
                 .append("SUM(COALESCE(InRouteQty,0))   AS InRouteQty, ")
                 .append("SUM(COALESCE(DeliveredQty,0)) AS DeliveredQty, ")
                 .append("SUM(COALESCE(InvoicedQty,0))  AS InvoicedQty ")
-                .append("FROM TMSMRCH.XXVW_CasesAll_Current ca WHERE 1=1 ");
+                .append("FROM LEWISB.XXVW_CasesAll_Current ca WHERE 1=1 ");
 
         List<Object> params = new ArrayList<>();
         if (startDate != null && !startDate.trim().isEmpty()) {
@@ -130,7 +130,7 @@ public class JdbcRepository {
         String hdrSql =
                 "SELECT soh.SOHNUM_0 AS id, soh.DEMDLVDAT_0 AS date, bp.BPCNAM_0 AS customer, bp.BPCNUM_0 AS customerId, " +
                         "'' AS notes, soh.BPCCTY_0 AS deliveryAddress " +
-                        "FROM TMSMRCH.SORDER soh LEFT JOIN TMSMRCH.BPCUSTOMER bp ON bp.BPCNUM_0 = soh.BPCORD_0 " +
+                        "FROM LEWISB.SORDER soh LEFT JOIN LEWISB.BPCUSTOMER bp ON bp.BPCNUM_0 = soh.BPCORD_0 " +
                         "WHERE soh.SOHNUM_0 = ?";
 
         Map<String, Object> hdr;
@@ -167,19 +167,19 @@ public class JdbcRepository {
                             "  ISNULL(q.UNITPR_0, 0) AS unitPrice, " +
                             "  ISNULL(pr.pick_ticket_count, 0) AS pick_ticket_count, " +
                             "  ISNULL(pr.pick_ticket_numbers, '') AS pick_ticket_numbers " +
-                            "FROM TMSMRCH.SORDERQ q " +
-                            "LEFT JOIN TMSMRCH.ITMMASTER i ON i.ITMREF_0 = q.ITMREF_0 " +
+                            "FROM LEWISB.SORDERQ q " +
+                            "LEFT JOIN LEWISB.ITMMASTER i ON i.ITMREF_0 = q.ITMREF_0 " +
                             "LEFT JOIN ( " +
                             "    SELECT s.ORINUM_0 AS soNumber, s.ORILIN_0 AS soLine, SUM(ISNULL(s.QTYSTU_0,0)) AS picked_qty, " +
                             "           COUNT(DISTINCT s.PRHNUM_0) AS pick_ticket_count, " +
-                            "           STUFF((SELECT ',' + CONVERT(varchar(50), s2.PRHNUM_0) FROM TMSMRCH.STOPRED s2 " +
+                            "           STUFF((SELECT ',' + CONVERT(varchar(50), s2.PRHNUM_0) FROM LEWISB.STOPRED s2 " +
                             "                 WHERE s2.ORINUM_0 = s.ORINUM_0 AND s2.ORILIN_0 = s.ORILIN_0 " +
                             "                 GROUP BY s2.PRHNUM_0 ORDER BY s2.PRHNUM_0 FOR XML PATH(''), TYPE).value('.', 'nvarchar(max)'),1,1,'') AS pick_ticket_numbers " +
-                            "    FROM TMSMRCH.STOPRED s GROUP BY s.ORINUM_0, s.ORILIN_0 " +
+                            "    FROM LEWISB.STOPRED s GROUP BY s.ORINUM_0, s.ORILIN_0 " +
                             ") pr ON pr.soNumber = q.SOHNUM_0 AND pr.soLine = q.SOPLIN_0 " +
                             "LEFT JOIN ( " +
                             "    SELECT s.ORINUM_0 AS soNumber, s.ORILIN_0 AS soLine, SUM(ISNULL(s.QTYSTU_0,0)) AS inroute_qty " +
-                            "    FROM TMSMRCH.STOPRED s JOIN TMSMRCH.XX10CPLANCHD p ON p.SDHNUM = s.PRHNUM_0 " +
+                            "    FROM LEWISB.STOPRED s JOIN LEWISB.XX10CPLANCHD p ON p.SDHNUM = s.PRHNUM_0 " +
                             "    GROUP BY s.ORINUM_0, s.ORILIN_0 " +
                             ") ir ON ir.soNumber = q.SOHNUM_0 AND ir.soLine = q.SOPLIN_0 " +
                             "WHERE q.SOHNUM_0 = ? ORDER BY q.SOPLIN_0";
@@ -221,21 +221,21 @@ public class JdbcRepository {
     public List<Map<String,Object>> fetchOrders(String type, boolean isGap, String startDate, String endDate, String site, String search) {
         if (isGap) {
             switch (type) {
-                case "generatedNotAllocated": return fetchOrdersFromView("TMSMRCH.XXVW_Orders_GeneratedNotAllocated", startDate, endDate, site, search);
-                case "allocatedNotPicked":    return fetchOrdersFromView("TMSMRCH.XXVW_Orders_AllocatedNotPicked", startDate, endDate, site, search);
-                case "pickedNotInRoute":      return fetchOrdersFromView("TMSMRCH.XXVW_Orders_PickedNotInRoute", startDate, endDate, site, search);
-                case "inRouteNotDelivered":   return fetchOrdersFromView("TMSMRCH.XXVW_Orders_InRouteNotDelivered", startDate, endDate, site, search);
-                case "deliveredNotInvoiced":  return fetchOrdersFromView("TMSMRCH.XXVW_Orders_DeliveredNotInvoiced", startDate, endDate, site, search);
+                case "generatedNotAllocated": return fetchOrdersFromView("LEWISB.XXVW_Orders_GeneratedNotAllocated", startDate, endDate, site, search);
+                case "allocatedNotPicked":    return fetchOrdersFromView("LEWISB.XXVW_Orders_AllocatedNotPicked", startDate, endDate, site, search);
+                case "pickedNotInRoute":      return fetchOrdersFromView("LEWISB.XXVW_Orders_PickedNotInRoute", startDate, endDate, site, search);
+                case "inRouteNotDelivered":   return fetchOrdersFromView("LEWISB.XXVW_Orders_InRouteNotDelivered", startDate, endDate, site, search);
+                case "deliveredNotInvoiced":  return fetchOrdersFromView("LEWISB.XXVW_Orders_DeliveredNotInvoiced", startDate, endDate, site, search);
                 default: throw new IllegalArgumentException("Unknown gap type: " + type);
             }
         } else {
             switch (type) {
-                case "generated": return fetchOrdersFromView("TMSMRCH.XXVW_Orders_Generated", startDate, endDate, site, search);
-                case "allocated": return fetchOrdersFromView("TMSMRCH.XXVW_Orders_Allocated", startDate, endDate, site, search);
-                case "picktickets": return fetchOrdersFromView("TMSMRCH.XXVW_Orders_Picked", startDate, endDate, site, search);
-                case "route": return fetchOrdersFromView("TMSMRCH.XXVW_Orders_InRoute", startDate, endDate, site, search);
-                case "delivered": return fetchOrdersFromView("TMSMRCH.XXVW_Orders_Delivered", startDate, endDate, site, search);
-                case "invoiced": return fetchOrdersFromView("TMSMRCH.XXVW_Orders_Invoiced", startDate, endDate, site, search);
+                case "generated": return fetchOrdersFromView("LEWISB.XXVW_Orders_Generated", startDate, endDate, site, search);
+                case "allocated": return fetchOrdersFromView("LEWISB.XXVW_Orders_Allocated", startDate, endDate, site, search);
+                case "picktickets": return fetchOrdersFromView("LEWISB.XXVW_Orders_Picked", startDate, endDate, site, search);
+                case "route": return fetchOrdersFromView("LEWISB.XXVW_Orders_InRoute", startDate, endDate, site, search);
+                case "delivered": return fetchOrdersFromView("LEWISB.XXVW_Orders_Delivered", startDate, endDate, site, search);
+                case "invoiced": return fetchOrdersFromView("LEWISB.XXVW_Orders_Invoiced", startDate, endDate, site, search);
                 default: throw new IllegalArgumentException("Unknown type: " + type);
             }
         }

@@ -15,9 +15,9 @@ public interface VehRouteRepository extends CrudRepository<VehRoute, String> {
 
     public List<VehRoute> findByFcy(String fcy);
 
-    public List<VehRoute> findByFcyAndDatliv(String fcy, Date date);
+    public List<VehRoute> findByFcyAndDatliv(String fcy, String date);
 
-    public List<VehRoute> findByDatliv(Date date);
+    public List<VehRoute> findByDatliv(String datliv);
 
     public VehRoute findByXnumpc(String vrcode);
 }

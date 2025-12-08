@@ -573,7 +573,7 @@ public class AsyncService {
 
 
         //  dropsVO.setLogisticDetails(this.convertToString(drops.get("Speciality")));
-        dropsVO.setLogisticDetails(this.constructDropSpeciality(this.convertToString(drops.get("loadBay")),this.convertToString(drops.get("tailGate")),this.DecimaltoString((BigDecimal)drops.get("BPServiceTime")),this.DecimaltoString((BigDecimal) drops.get("WaitingTime")), this.stackHeightConv((BigDecimal) drops.get("StackHeight")),this.convertToString(drops.get("vehType")),this.convertToString(drops.get("Timings")),this.PackingConv(convertToShort(drops.get("Packing"))),
+        dropsVO.setLogisticDetails(this.constructDropSpeciality(this.convertToString(drops.get("loadBay")),this.convertToString(drops.get("tailGate")),this.DecimaltoString(this.convertToBigDecimal(drops.get("BPServiceTime"))),this.DecimaltoString(this.convertToBigDecimal(drops.get("WaitingTime"))), this.stackHeightConv(this.convertToBigDecimal(drops.get("StackHeight"))),this.convertToString(drops.get("vehType")),this.convertToString(drops.get("Timings")),this.PackingConv(convertToShort(drops.get("Packing"))),
                 this.HeightConv(convertToShort(drops.get("Height"))),
                 this.LoadingOrderConv(convertToShort(drops.get("LoadingOrder")))));
        // dropsVO.setBPServiceTime(this.convertToString(drops.get("BPServiceTime")));
@@ -844,11 +844,15 @@ public class AsyncService {
         dropsVO.setBPServiceTime(this.convertToString(drops.get("BPServiceTime")));
         dropsVO.setStackHeight(this.convertToString(drops.get("StackHeight")));
         dropsVO.setTimings(this.convertToString(drops.get("Timings")));
-        dropsVO.setPacking(this.PackingConv((Short)drops.get("Packing")));
-        dropsVO.setHeight(this.HeightConv((Short)drops.get("Height")));
-        dropsVO.setLoadingOrder(this.LoadingOrderConv((Short)drops.get("LoadingOrder")));
+//        dropsVO.setPacking(this.PackingConv((Short)drops.get("Packing")));
+//        dropsVO.setHeight(this.HeightConv((Short)drops.get("Height")));
+//        dropsVO.setLoadingOrder(this.LoadingOrderConv((Short)drops.get("LoadingOrder")));
 
-        dropsVO.setLogisticDetails(this.constructDropSpeciality(this.convertToString(drops.get("loadBay")),this.convertToString(drops.get("tailGate")),this.DecimaltoString((BigDecimal)drops.get("BPServiceTime")),this.DecimaltoString((BigDecimal) drops.get("WaitingTime")), this.stackHeightConv((BigDecimal) drops.get("StackHeight")),this.convertToString(drops.get("vehType")),this.convertToString(drops.get("Timings")),this.PackingConv((Short)drops.get("Packing")),this.HeightConv((Short) drops.get("Height")),this.LoadingOrderConv((Short)drops.get("LoadingOrder"))));
+        dropsVO.setPacking(this.PackingConv(toShort(drops.get("Packing"))));
+        dropsVO.setHeight(this.HeightConv(toShort(drops.get("Height"))));
+        dropsVO.setLoadingOrder(this.LoadingOrderConv(toShort(drops.get("LoadingOrder"))));
+
+        dropsVO.setLogisticDetails(this.constructDropSpeciality(this.convertToString(drops.get("loadBay")),this.convertToString(drops.get("tailGate")),this.DecimaltoString(this.convertToBigDecimal(drops.get("BPServiceTime"))),this.DecimaltoString(this.convertToBigDecimal(drops.get("WaitingTime"))), this.stackHeightConv(this.convertToBigDecimal(drops.get("StackHeight"))),this.convertToString(drops.get("vehType")),this.convertToString(drops.get("Timings")),this.PackingConv(toShort(drops.get("Packing"))),this.HeightConv(toShort(drops.get("Height"))),this.LoadingOrderConv(toShort(drops.get("LoadingOrder")))));
         //dropsVO.setBPServiceTime(this.convertToString(drops.get("BPServiceTime")));
         if(Objects.isNull(dropsVO.getProducts())) {
             List<ProductVO> productVOS = new ArrayList<>();
@@ -858,6 +862,14 @@ public class AsyncService {
 
         return dropsVO;
     }
+
+    private Short toShort(Object value) {
+        if (value == null) return null;
+        if (value instanceof Short) return (Short) value;
+        if (value instanceof Integer) return ((Integer) value).shortValue();
+        throw new IllegalArgumentException("Cannot convert to Short: " + value.getClass());
+    }
+
 
     private ProductVO getProductVO(Map<String, Object> map) {
         ProductVO productVO = new ProductVO();
@@ -940,9 +952,23 @@ public class AsyncService {
 //    }
 
     private BigDecimal convertToBigDecimal(Object value) {
-        if(Objects.nonNull(value)) return (BigDecimal) value;
-        return new BigDecimal(0);
+        if (value == null) return BigDecimal.ZERO;
+
+        if (value instanceof BigDecimal) {
+            return (BigDecimal) value;
+        } else if (value instanceof Integer) {
+            return BigDecimal.valueOf((Integer) value);
+        } else if (value instanceof Long) {
+            return BigDecimal.valueOf((Long) value);
+        } else if (value instanceof Double) {
+            return BigDecimal.valueOf((Double) value);
+        } else if (value instanceof Float) {
+            return BigDecimal.valueOf(((Float) value).doubleValue());
+        } else {
+            throw new IllegalArgumentException("Cannot convert to BigDecimal: " + value.getClass());
+        }
     }
+
 
     private DropsVO convertDrops(Drops drops) {
         DropsVO dropsVO = new DropsVO();
