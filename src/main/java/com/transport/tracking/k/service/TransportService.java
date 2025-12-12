@@ -1161,7 +1161,7 @@
 
                 List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_TRIP_QUERY, dbSchema, "SORDER", itemCode)).getResultList();
                 if (list.size() > 0) {
-                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_TRIP_DELETION_1, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIME_0","XDEPTIME_0","XX10C_BPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDPEDAT_0","XCOMMENT_0")).executeUpdate();
+                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_TRIP_DELETION_1, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIME_0","XDEPTIME_0","XX10C_BPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDEPDAT_0","XCOMMENT_0")).executeUpdate();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1211,7 +1211,7 @@
 
                 List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_TRIP_QUERY, dbSchema, "SORDER", itemCode)).getResultList();
                 if (list.size() > 0) {
-                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_TRIP_DELETION_1, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIME_0","XDEPTIME_0","XX10C_BPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDPEDAT_0","XCOMMENT_0")).executeUpdate();
+                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_TRIP_DELETION_1, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIME_0","XDEPTIME_0","XX10C_BPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDEPDAT_0","XCOMMENT_0")).executeUpdate();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
