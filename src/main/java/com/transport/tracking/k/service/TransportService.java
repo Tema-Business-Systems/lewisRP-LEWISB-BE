@@ -1906,7 +1906,10 @@
                         }
                     }
                 }
+
+
             }
+
             double totalWeight = 0.0;
             double totalVolume = 0.0;
             int totalDrops = 0;
@@ -1918,14 +1921,6 @@
                 totalVolume += doc.get("volume") != null ? Double.parseDouble(doc.get("volume").toString()) : 0;
 //                totalCases += doc.get("noofCases") != null ? Double.parseDouble(doc.get("noofCases").toString()) : 0;
 //                totmainCases += doc.get("mainCases") != null ? (int) Math.round(Double.parseDouble(doc.get("mainCases").toString())) : 0;
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-               // String type = doc.get("doctype") != null ? doc.get("doctype").toString().toLowerCase() : "";
-               // if ("drop".equals(type)) totalDrops++;
-                String type = doc.get("doctype") != null ? doc.get("doctype").toString() : "";
-=======
->>>>>>> Stashed changes
                 String type = doc.get("doctype") != null ? doc.get("doctype").toString() : "";
 //                if ("drop".equals(type)) totalDrops++;
                 if (!isPickupDocument(type)) {
@@ -1935,20 +1930,13 @@
                     totalPickups++;
                 }
             }
->>>>>>> 396960a12dfbfc61d89eba3ac367b67463e1d587
 
-                if (!isPickupDocument(type)) {
-                    totalDrops++;
-                }
-                else {
-                    totalPickups++;
-                }
-            }
             // Update tripVO totals (same fields as insertTrip)
             tripVO.setDoc_capacity(String.valueOf(totalWeight));
             tripVO.setDoc_volume(String.valueOf(totalVolume));
+//            tripVO.setTotalCases(String.valueOf(totalCases));
+//            tripVO.setMainCases(String.valueOf(totmainCases));
             tripVO.setStops(totalStops);
-            tripVO.setPickups(totalPickups);
             tripVO.setDrops(totalDrops);
             tripVO.setPickups(totalPickups);
 
@@ -2278,14 +2266,7 @@
             double totalVolume = 0.0;
 //            double totalCases = 0.0;
 //            int totmainCases = 0;
-<<<<<<< Updated upstream
 //            int totalDrops = validDocs.size();
-=======
-<<<<<<< HEAD
-=======
-//            int totalDrops = validDocs.size();
->>>>>>> 396960a12dfbfc61d89eba3ac367b67463e1d587
->>>>>>> Stashed changes
             int totalDrops = 0;
             int totalPickups = 0;
             int totalStops = validDocs.size();
@@ -2306,12 +2287,6 @@
                     totalDrops++;
                 } else {
                     totalPickups++;
-<<<<<<< Updated upstream
-=======
-                }
-                else {
-                    totalPickups++;
->>>>>>> Stashed changes
                 }
             }
     // Update tripVO totals
@@ -2322,7 +2297,6 @@
 //            tripVO.setMainCases(String.valueOf(totmainCases));
             tripVO.setStops(totalStops);
             tripVO.setDrops(totalDrops);
-            tripVO.setPickups(totalPickups);
 
             totalObjMap.put("selectedTripData", validDocs);
             tripVO.setTotalObject(totalObjMap);
