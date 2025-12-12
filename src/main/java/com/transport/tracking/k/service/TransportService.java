@@ -1103,6 +1103,14 @@
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            //SALES ORDER updation
+            try {
+                if ("SORDER".equalsIgnoreCase(type)) {
+                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_doc_DELETION, dbSchema, "SORDER", docnum,"",8,"XX10C_LICPLA_0","XARTIMR_0","XDEPTIME_0","XBPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARDAT_0","XDEPDAT_0","XCOMMENT_0", "SOHNUM_0")).executeUpdate();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         private void updateDocAfterreDesignTrip(String itemCode) {
             //sdelivery updation
@@ -1141,6 +1149,17 @@
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            try {
+
+                List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_DOC_CHECK_QUERY, dbSchema, "SORDER", itemCode)).getResultList();
+                if (list.size() > 0) {
+                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_TRIP_DELETION, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIMR_0","XDEPTIME_0","XBPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDPEDAT_0","XCOMMENT_0")).executeUpdate();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
         private void updateDocAfterDeleteTrip(String itemCode) {
             //sdelivery updation
@@ -1175,6 +1194,17 @@
                 List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_DOC_CHECK_QUERY, dbSchema, "XX10CREC", itemCode)).getResultList();
                 if (list.size() > 0) {
                     entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_TRIP_DELETION, dbSchema, "XX10CREC", itemCode,"",8,"XX10C_LICPLA_0","XETA_0","XETD_0","XBPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDPEDAT_0","XCOMMENT_0")).executeUpdate();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // SALES ORDER
+            try {
+
+                List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_DOC_CHECK_QUERY, dbSchema, "SORDER", itemCode)).getResultList();
+                if (list.size() > 0) {
+                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_TRIP_DELETION, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIMR_0","XDEPTIME_0","XBPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDPEDAT_0","XCOMMENT_0")).executeUpdate();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1238,6 +1268,16 @@
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            try {
+
+                List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_DOC_CHECK_QUERY, dbSchema, "SORDER", itemCode)).getResultList();
+                if (list.size() > 0) {
+                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_VR_DELETION, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIMR_0","XDEPTIME_0","XBPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDPEDAT_0","XCOMMENT_0")).executeUpdate();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         private void updateDelivery(Date date, int docNum, String docnum) {
@@ -1249,6 +1289,8 @@
                 this.updateRecord("XX10CREC", "XRCPDAT_0", "XPTHNUM_0", null, date, docnum);
             }else if (docNum == 3) {
                 this.updateRecord("SRETURN", "RTNDAT_0", "SRHNUM_0", null, date, docnum);
+            }else if (docNum == 9) {
+                this.updateRecord("SORDER", "ORDDAT_0", "SOHNUM_0", null, date, docnum);
             }
         }
 
@@ -1268,6 +1310,9 @@
             }
             else if(docNum == 3) {
                 this.updatedocumentsforSchduler("SRETURN", "XX10C_NUMPC_0", "XX10C_LICPLA_0",  "SRHNUM_0","XDLV_STATUS_0",vr,Veh_code,ddate,docnum,1 , "RTNDAT_0", "XROUTNBR_0",Tripno,"XSEQUENCE_0",seqno );
+            }
+            else if(docNum == 9) {
+                this.updatedocumentsforSchduler("SORDER", "XNUMPC_0", "XX10C_LICPLA_0",  "SOHNUM_0","XDLV_STATUS_0",vr,Veh_code,ddate,docnum,1 , "ORDDAT_0", "XROUTNBR_0",Tripno,"XSEQUENCE_0",seqno );
             }
             }
 
@@ -1313,6 +1358,8 @@
                 this.updatedocument("XX10CREC", "XX10C_NUMPC_0", "XX10C_LICPLA_0", "XETA_0", "XETD_0", "XPTHNUM_0","XDLV_STATUS_0","XARVDAT_0", "XDPEDAT_0","XBPTNUM_0","XDRIVERID_0","XTRAILER_0",vr,Veh_code,ddate,arvtime,carrier,Deptime,docnum,1,driverid,"XROUTNBR_0",tripnum,trail,"XCOMMENT_0",comments,PTheader,docNum);
             }else if(docNum == 3) {
                 this.updatedocument("SRETURN", "XX10C_NUMPC_0", "XX10C_LICPLA_0", "ETAR_0", "ETDR_0", "SRHNUM_0","XDLV_STATUS_0","ARVDATR_0", "DPEDATR_0","XX10C_BPTNUM_0","DRIVERID_0","XTRAILER_0",vr,Veh_code,ddate,arvtime,carrier,Deptime,docnum,1,driverid,"XROUTNBR_0",tripnum,trail,"XCOMMENT_0",comments,PTheader,docNum);
+            }else if(docNum == 9) {
+                this.updatedocument("SORDER", "XNUMPC_0", "XX10C_LICPLA_0", "XARTIMR_0", "XDEPTIME_0", "S0HNUM_0","XDLV_STATUS_0","XARDAT_0", "XDEPDAT_0","XX10C_BPTNUM_0","XDRIVERID_0","XTRAILER_0",vr,Veh_code,ddate,arvtime,carrier,Deptime,docnum,1,driverid,"XROUTNBR_0",tripnum,trail,"XCOMMENT_0",comments,PTheader,docNum);
             }
 
         }
@@ -1601,6 +1648,8 @@
                     return 2;
                 }else if ("RETURN".equalsIgnoreCase(docType)) {
                     return 3;
+                }else if ("SORDER".equalsIgnoreCase(docType)) {
+                    return 9;
                 }
             }
             return 0;
