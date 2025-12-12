@@ -142,6 +142,9 @@
         private String UPDATE_doc_QUERY_AFTER_doc_DELETION_1 = "update {0}.{1} SET XNUMPC_0 = ''{3}'',{5} = ''{3}'',{6} = ''{3}'',{7} = ''{3}'',XDLV_STATUS_0 = {4},{8} =''{3}'',{9} =''{3}'',{10} = ''{3}'',{11}=''{3}'',{12}=''{3}'',{13}=''{3}'',{14}=''{3}''  where {15} =  ''{2}'' ";
         private String UPDATE_doc_QUERY_AFTER_TRIP_DELETION_1 = "update {0}.{1} SET XNUMPC_0 = ''{3}'',{5} = ''{3}'',{6} = ''{3}'',{7} = ''{3}'',XDLV_STATUS_0 = {4},{8} =''{3}'',{9} =''{3}'',{10} = ''{3}'',{12}=''{3}'',{13}=''{3}'',{14}=''{3}''  where XNUMPC_0 =  ''{2}'' ";
 
+        private String UPDATE_doc_QUERY_AFTER_VR_DELETION_1 = "update {0}.{1} SET XNUMPC_0 = ''{3}'',{5} = ''{3}'',{6} = ''{3}'',{7} = ''{3}'',XDLV_STATUS_0 = {4},{8} =''{3}'',{9} =''{3}'',{10} = ''{3}'',{11}=''{3}'',{12}=''{3}'',{13}=''{3}'',{14}=''{3}''  where XNUMPC_0 =  ''{2}'' ";
+
+
         private static SimpleDateFormat tripFormat = new SimpleDateFormat("YYMMdd");
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -1277,7 +1280,7 @@
 
                 List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_TRIP_QUERY, dbSchema, "SORDER", itemCode)).getResultList();
                 if (list.size() > 0) {
-                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_VR_DELETION, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIME_0","XDEPTIME_0","XBPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDPEDAT_0","XCOMMENT_0")).executeUpdate();
+                    entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_VR_DELETION_1, dbSchema, "SORDER", itemCode,"",8,"XX10C_LICPLA_0","XARTIME_0","XDEPTIME_0","XBPTNUM_0","XDRIVERID_0","XTRAILER_0","XROUTNBR_0","XARVDAT_0","XDPEDAT_0","XCOMMENT_0")).executeUpdate();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
