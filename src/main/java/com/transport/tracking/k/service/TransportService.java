@@ -1363,7 +1363,7 @@
             }else if(docNum == 3) {
                 this.updatedocument("SRETURN", "XX10C_NUMPC_0", "XX10C_LICPLA_0", "ETAR_0", "ETDR_0", "SRHNUM_0","XDLV_STATUS_0","ARVDATR_0", "DPEDATR_0","XX10C_BPTNUM_0","DRIVERID_0","XTRAILER_0",vr,Veh_code,ddate,arvtime,carrier,Deptime,docnum,1,driverid,"XROUTNBR_0",tripnum,trail,"XCOMMENT_0",comments,PTheader,docNum);
             }else if(docNum == 9) {
-                this.updatedocument("SORDER", "XNUMPC_0", "XX10C_LICPLA_0", "XARTIMR_0", "XDEPTIME_0", "S0HNUM_0","XDLV_STATUS_0","XARDAT_0", "XDEPDAT_0","XX10C_BPTNUM_0","XDRIVERID_0","XTRAILER_0",vr,Veh_code,ddate,arvtime,carrier,Deptime,docnum,1,driverid,"XROUTNBR_0",tripnum,trail,"XCOMMENT_0",comments,PTheader,docNum);
+                this.updatedocument("SORDER", "XNUMPC_0", "XX10C_LICPLA_0", "XARTIMR_0", "XDEPTIME_0", "SOHNUM_0","XDLV_STATUS_0","XARDAT_0", "XDEPDAT_0","XX10C_BPTNUM_0","XDRIVERID_0","XTRAILER_0",vr,Veh_code,ddate,arvtime,carrier,Deptime,docnum,1,driverid,"XROUTNBR_0",tripnum,trail,"XCOMMENT_0",comments,PTheader,docNum);
             }
 
         }
