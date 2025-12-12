@@ -1624,6 +1624,7 @@
             try {
                 List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_SO_FROM_PICKTICKET_CHECK_QUERY, dbSchema, "STOPRED", pcktno)).getResultList();
                 if (list.size() > 0) {
+                    
                    // entityManager.createNativeQuery(MessageFormat.format(UPDATE_doc_QUERY_AFTER_TRIP_DELETION, dbSchema, "STOPREH", itemCode,"",8,"XX10C_LICPLA_0","ETA_0","ETD_0","BPTNUM_0","DRIVERID_0","XTRAILER_0","XROUTNBR_0","ARVDAT_0","DPEDAT_0","XCOMMENT_0")).executeUpdate();
                         for(int i=0 ; i<list.size();i++){
                             log.info(list.get(i).toString());
