@@ -137,10 +137,10 @@ public class AsyncService {
                 if("Yes".equalsIgnoreCase(vehicle.getTrailerLink()) && org.apache.commons.lang3.StringUtils.isNotBlank(trailerCode)) {
                     Trail trail = trailRepository.findByTrailer(trailerCode);
                     if(trail != null) {
-                        vehicleVO.setMaxlovol(trail.getMaxlovol());
-                        vehicleVO.setMaxloams(trail.getMaxloams());
-                        vehicleVO.setXmaxlovol(trail.getXmaxlovol());
-                        vehicleVO.setXmaxloams(trail.getXmaxloams());
+                        vehicleVO.setTrailerWeight(trail.getMaxlovol());
+                        vehicleVO.setTrailerVolume(trail.getMaxloams());
+                        vehicleVO.setTrailerVolunit(trail.getXmaxlovol());
+                        vehicleVO.setTrailerWeiunit(trail.getXmaxloams());
                     }
                 }
             }

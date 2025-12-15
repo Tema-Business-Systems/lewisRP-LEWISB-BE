@@ -71,9 +71,9 @@ public class VehicleVO {
       private String aprodCategDesc;
       private String avehClassListDesc;
       private int maxqty;
-      private BigDecimal maxlovol;
-      private BigDecimal maxloams;
-      private String xmaxlovol;
-      private String xmaxloams;
+      private BigDecimal trailerWeight;
+      private BigDecimal trailerVolume;
+      private String trailerVolunit;
+      private String trailerWeiunit;
 
 }
