@@ -131,11 +131,19 @@ public class AsyncService {
         VehTrail vehTrail =  vehTrailRepository.findTrailerbyVehicleSiteandDate(Veh,vehsite,dddate);
 
             if(Objects.nonNull(vehTrail)) {
-                vehicleVO.setTrailer(vehTrail.getTrailer());
-                log.info(vehTrail.getTrailer());
+                String trailerCode = vehTrail.getTrailer();
+                vehicleVO.setTrailer(trailerCode);
+                log.info(trailerCode);
+                if("Yes".equalsIgnoreCase(vehicle.getTrailerLink()) && org.apache.commons.lang3.StringUtils.isNotBlank(trailerCode)) {
+                    Trail trail = trailRepository.findByTrailer(trailerCode);
+                    if(trail != null) {
+                        vehicleVO.setMaxlovol(trail.getMaxlovol());
+                        vehicleVO.setMaxloams(trail.getMaxloams());
+                        vehicleVO.setXmaxlovol(trail.getXmaxlovol());
+                        vehicleVO.setXmaxloams(trail.getXmaxloams());
+                    }
+                }
             }
-           // vehicleVO.setTrailer(vehicle.getTrailer());
-
         List<String> equipmentList = new ArrayList<>();
         if(org.apache.commons.lang3.StringUtils.isNoneBlank(vehicle.getEquipment1())) {
             equipmentList.add(vehicle.getEquipment1());
