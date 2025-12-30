@@ -81,7 +81,7 @@ public class UserService {
         userVO = new UserVO();
         userVO.setXusrname(user.getXusrname());
         userVO.setXlogin(user.getXlogin());
-        userVO.setRemovePicktcktflg(user.getRouteplannerflg());
+        userVO.setRouteplannerflg(user.getRouteplannerflg());
         userVO.setSchedulerflg(user.getSchedulerflg());
         userVO.setCalendarrpflg(user.getCalendarrpflg());
         userVO.setMapviewrpflg(user.getMapviewrpflg());
