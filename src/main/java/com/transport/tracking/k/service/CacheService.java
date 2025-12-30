@@ -292,10 +292,10 @@ public class CacheService {
                     tripVO.setRouteStatus("Trip Completed");
                     break;
                 case 6:
-                    tripVO.setRouteStatus("Unloaded in Stage Location");
+                    tripVO.setRouteStatus("Unloaded");
                     break;
                 case 7:
-                    tripVO.setRouteStatus("Returned");
+                    tripVO.setRouteStatus("Checked Out");
                     break;
                 case 8:
                     tripVO.setRouteStatus("ALL");
@@ -307,64 +307,73 @@ public class CacheService {
                     tripVO.setRouteStatus("Checked-Out");
                     break;
                 case 11:
-                    tripVO.setRouteStatus("Loads in Completed");
+                    tripVO.setRouteStatus("Cancel");
                     break;
                 case 12:
-                    tripVO.setRouteStatus("Counts In Progress");
+                    tripVO.setRouteStatus("Route In Progress");
                     break;
                 case 13:
-                    tripVO.setRouteStatus("Cashier Reconcillation Completed");
+                    tripVO.setRouteStatus("Loading to a Staging");
                     break;
                 case 14:
-                    tripVO.setRouteStatus("Route Settled");
+                    tripVO.setRouteStatus("Loading to Truck/Trailer");
                     break;
                 case 15:
-                    tripVO.setRouteStatus("To Allocate");
+                    tripVO.setRouteStatus("Loads in Completed");
                     break;
                 case 16:
-                    tripVO.setRouteStatus("Detail Allocated");
+                    tripVO.setRouteStatus("Counts in process");
                     break;
                 case 17:
-                    tripVO.setRouteStatus("To Pick");
+                    tripVO.setRouteStatus("Succeeded");
                     break;
                 case 18:
-                    tripVO.setRouteStatus("Pick Complete");
+                    tripVO.setRouteStatus("Cashier Recouncilation Completed");
                     break;
                 case 19:
-                    tripVO.setRouteStatus("Supervisor Verified");
+                    tripVO.setRouteStatus("Route Settled");
                     break;
                 case 20:
-                    tripVO.setRouteStatus("In-Route");
+                    tripVO.setRouteStatus("To Allocate");
                     break;
                 case 21:
-                    tripVO.setRouteStatus("Loads In Reconciled");
+                    tripVO.setRouteStatus("Detail Allocated");
                     break;
                 case 22:
-                    tripVO.setRouteStatus("Pick Reconciled");
+                    tripVO.setRouteStatus("To Pick");
                     break;
                 case 23:
-                    tripVO.setRouteStatus("Security Verified");
+                    tripVO.setRouteStatus("Pick Complete");
                     break;
                 case 24:
-                    tripVO.setRouteStatus("Picking");
+                    tripVO.setRouteStatus("Supervisor verified");
                     break;
                 case 25:
-                    tripVO.setRouteStatus("Picking Stopped");
+                    tripVO.setRouteStatus("In-Route");
                     break;
                 case 26:
-                    tripVO.setRouteStatus("Security Not Authorized");
+                    tripVO.setRouteStatus("Loads in Reconciled");
                     break;
                 case 27:
-                    tripVO.setRouteStatus("Ready to Load");
+                    tripVO.setRouteStatus("Pick Reconciled");
                     break;
                 case 28:
-                    tripVO.setRouteStatus("Partial Detail Allocation");
+                    tripVO.setRouteStatus("Security Verified");
                     break;
                 case 29:
-                    tripVO.setRouteStatus("To Pick*");
+                    tripVO.setRouteStatus("Picking");
+                    break;
+                case 30:
+                    tripVO.setRouteStatus("Picking Stoped");
+                    break;
+                case 31:
+                    tripVO.setRouteStatus("Security Not Autorized");
+                    break;
+                case 32:
+                    tripVO.setRouteStatus("Ready to Load");
                     break;
                 default:
-                    tripVO.setRouteStatus("To Load");
+                    tripVO.setRouteStatus("To Plan *");
                     break;
             }
         }

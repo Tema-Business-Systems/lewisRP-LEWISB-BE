@@ -634,6 +634,7 @@
                VehRoute vehroute = vehRouteRepository.findByXnumpc(vr);
                String LVS,XBPTNUM;
                int onlyReceipts = 0;
+               int xloadflg_update = 1;
                String Appuser = "";
                Date currentDate = new Date();
                String DATENOW = format.format(currentDate);
@@ -657,9 +658,11 @@
 
                if(tripVO.getDrops() == 0 && tripVO.getPickups() > 0){
                    onlyReceipts = 2;
+                   xloadflg_update = 3;
                    Appuser = vehroute.getDriverid();
                }else {
                    onlyReceipts = 1;
+                   xloadflg_update = 1;
                }
 
                // 🔎 Trip-level validation
@@ -777,7 +780,7 @@
                        "DIE_0, DIE_1, DIE_2, DIE_3, DIE_4, DIE_5, DIE_6, DIE_7, DIE_8, DIE_9, DIE_10, DIE_11, DIE_12, DIE_13, DIE_14, DIE_15, DIE_16, DIE_17, DIE_18, DIE_19,CCE_0,CCE_1, CCE_2, CCE_3, CCE_4, CCE_5, CCE_6, CCE_7,CCE_8,CCE_9, CCE_10, CCE_11, CCE_12, CCE_13, CCE_14, CCE_15, CCE_16, CCE_17, CCE_18, CCE_19, XBUSTYP3_0, XBPTNUM_0,XECODEYVE_0,XEDRIVERID_0,XEREGSTR_0,XETRAILER_0,XETREGSTR_0,XLOG_0,XPDLOG_0,XSTOVAL_0,XMOB_0, XWEB_0,XFORSEQ_0, XLOADUSR_0, XLOADNAM_0, XLOADEML_0, XDRN_0,XPODSUB_0, XPODSTATUS_0, XLODAPPSTA_0 ,XROUTSTAT_0, XTRIP_0, MDL_0,XMLDUSER_0,XPOHNUM_0,XSTATUS_0, XALLFLG_0, XROUTERSA_0)\n" +
                        "VALUES(1, '" + LVS + "',0, '" + vehroute.getFcy() + "','" + vehroute.getXdesfcy() + "', '','' , '', '', '', '', '','','','',0,0,0,'','" + date + "','','',0," +
                        " '','','',0,0,'" + DATENOW + "','','" + DATENOW + "','','" + DATENOW + "','" + DATENOW + "',0x41027895E7BDB649ADD9317F23ADF47A,0,'','','','','" + date + "','" + vehroute.getHeudep() + "','" + vehroute.getDatarr() + "','" + vehroute.getHeuarr() + "','" + vehroute.getCodeyve() + "','','" + vehroute.getDriverid() + "','','',''," +
-                       " '"+Appuser+"','" + LVS + "',0,1,2,1,'" + vr + "','','',"+onlyReceipts+",''," + vehroute.getXroutnbr() + ",'',0.00,'" + vehroute.getCodeyve() + "',15,1,'" + date + "',2,0.0,0.00,0.00,'',0,0,0,'','','','','','','','','','','','','','','','" + vehroute.getTrailer() + "','" + vehroute.getTrailer_1() + "','', " +
+                       " '"+Appuser+"','" + LVS + "',0,1,2,1,'" + vr + "','','',"+onlyReceipts+",''," + vehroute.getXroutnbr() + ",'',0.00,'" + vehroute.getCodeyve() + "',"+xloadflg_update+",1,'" + date + "',2,0.0,0.00,0.00,'',0,0,0,'','','','','','','','','','','','','','','','" + vehroute.getTrailer() + "','" + vehroute.getTrailer_1() + "','', " +
                        " '" + date + "','',0,0,'','','" + vehroute.getNote() + "','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',1,'"+XBPTNUM+"','','','','','','','',1,'','',"+forceseq+",'','','', '',1,1,1,1,1,'','','','',0,'')";
                entityManager.createNativeQuery(query).executeUpdate();
 
