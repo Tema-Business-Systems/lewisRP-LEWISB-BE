@@ -38,6 +38,24 @@ public class User {
       private String creusr;
       @Column(name= "UPDUSR_0")
       private String updusr;
+      @Column(name= "XRPFLG_0")
+      private int routeplannerflg;
+      @Column(name= "XSCHFLG_0")
+      private int schedulerflg;
+      @Column(name= "XCALVFLG_0")
+      private int calendarrpflg;
+      @Column(name= "XMAPVFLG_0")
+      private int mapviewrpflg;
+      @Column(name= "XSCRRTFLG_0")
+      private int screportsflg;
+      @Column(name= "XFLEETFLG_0")
+      private int fleetmgmtflg;
+      @Column(name= "XUSRMGMTFLG_0")
+      private int usermgmtflg;
+      @Column(name= "XADDPCKFLG_0")
+      private int addPicktcktflg;
+      @Column(name= "XRMPCKFLG_0")
+      private int removePicktcktflg;
       @Column(name= "ROWID")
       private BigDecimal rowid;
 

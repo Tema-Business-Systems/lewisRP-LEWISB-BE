@@ -30,4 +30,13 @@ public class UserVO {
       private String updusr;
       private BigDecimal rowid;
       private String accessToken;
+      private int routeplannerflg;
+      private int schedulerflg;
+      private int calendarrpflg;
+      private int mapviewrpflg;
+      private int screportsflg;
+      private int fleetmgmtflg;
+      private int usermgmtflg;
+      private int addPicktcktflg;
+      private int removePicktcktflg;
 }

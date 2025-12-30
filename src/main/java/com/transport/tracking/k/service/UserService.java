@@ -81,8 +81,17 @@ public class UserService {
         userVO = new UserVO();
         userVO.setXusrname(user.getXusrname());
         userVO.setXlogin(user.getXlogin());
-
+        userVO.setRemovePicktcktflg(user.getRouteplannerflg());
+        userVO.setSchedulerflg(user.getSchedulerflg());
+        userVO.setCalendarrpflg(user.getCalendarrpflg());
+        userVO.setMapviewrpflg(user.getMapviewrpflg());
+        userVO.setScreportsflg(user.getScreportsflg());
+        userVO.setFleetmgmtflg(user.getFleetmgmtflg());
+        userVO.setUsermgmtflg(user.getUsermgmtflg());
+        userVO.setRemovePicktcktflg(user.getRemovePicktcktflg());
+        userVO.setAddPicktcktflg(user.getAddPicktcktflg());
         userVO.setXact(user.getXact());
+
         //Set<Role> roles = user.getRoles();
 
         List<String> permissions = new ArrayList();
