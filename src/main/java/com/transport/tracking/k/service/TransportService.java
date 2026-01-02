@@ -143,7 +143,8 @@
         private String UPDATE_doc_QUERY_AFTER_TRIP_DELETION_1 = "update {0}.{1} SET XNUMPC_0 = ''{3}'',{5} = ''{3}'',{6} = ''{3}'',{7} = ''{3}'',XDLV_STATUS_0 = {4},{8} =''{3}'',{9} =''{3}'',{10} = ''{3}'',{12}=''{3}'',{13}=''{3}'',{14}=''{3}''  where XNUMPC_0 =  ''{2}'' ";
 
         private String UPDATE_doc_QUERY_AFTER_VR_DELETION_1 = "update {0}.{1} SET XNUMPC_0 = ''{3}'',{5} = ''{3}'',{6} = ''{3}'',{7} = ''{3}'',XDLV_STATUS_0 = {4},{8} =''{3}'',{9} =''{3}'',{10} = ''{3}'',{11}=''{3}'',{12}=''{3}'',{13}=''{3}'',{14}=''{3}''  where XNUMPC_0 =  ''{2}'' ";
-
+        private String DELTE_LVS_QUERY = "delete from {0}.{1} where XVRSEL_0 = ''{2}''";
+        private String SELECT_LVS_QUERY = "SELECT * FROM {0}.{1} where XVRSEL_0 = ''{2}''";
 
         private static SimpleDateFormat tripFormat = new SimpleDateFormat("YYMMdd");
 
@@ -335,6 +336,49 @@
                 return listVrd;
             }
             return new ArrayList<>();
+        }
+
+
+        //  update for NonValidation
+        public void updateNonValidateVr(String tableName, String field1,String field2,String vrcode,TripVO tripvo){
+            String queryStr = null;
+            log.info("inside update validate");
+            // String date = format.format(currentDate);
+            queryStr =  MessageFormat.format(UPDATE_SINGLE_QUERY_INT, dbSchema, tableName, field1,field2,1,vrcode);
+            entityManager.createNativeQuery(queryStr).executeUpdate();
+            this.removeLVS(vrcode, tripvo);
+        }
+
+
+        public void removeLVS(String vr, TripVO tripVO) {
+            log.info("inside LVSdelete Trip");
+            try {
+                List<Object> list = entityManager.createNativeQuery(MessageFormat.format(SELECT_LVS_QUERY, dbSchema, "XX10CLODSTOH", vr)).getResultList();
+                if (list.size() > 0) {
+                    entityManager.createNativeQuery(MessageFormat.format(DELTE_LVS_QUERY, dbSchema, "XX10CLODSTOH", vr)).executeUpdate();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        public Map<String, String> NonValidateTrips(TripVO tripVO) throws Exception {
+            try {
+                log.info("inside NonValidate service");
+                //for (TripVO tripVO : tripVOList) {
+                String VRcode = tripVO.getItemCode().toString();
+                this.updateNonValidateVr("XX10CPLANCHA","XVALID_0","XNUMPC_0",VRcode,tripVO);
+                //entityManager.createNativeQuery(MessageFormat.format(SELECT_TRIP_QUERY, dbSchema, "XX10CPLANCHA", VRcode)).executeUpdate();
+                //}
+                Map<String, String> map = new HashMap<>();
+                map.put("success", "success");
+                return map;
+            } catch (Exception e) {
+                //   entityManager.createNativeQuery("INSERT INTO DEMOTMS.XTMSTEMP VALUES(100);").executeUpdate();
+                e.printStackTrace();
+                throw e;
+            }
         }
 
 

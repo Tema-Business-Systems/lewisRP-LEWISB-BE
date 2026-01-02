@@ -121,6 +121,11 @@ public class TransportController {
         return map;
     }
 
+    @PostMapping ("/nonvalidate")
+    public @ResponseBody Map<String, String> SubmitValidatedVR(@RequestBody TripVO request) throws Exception {
+        //  log.info("inside Validate Controller");
+        return  transportService.NonValidateTrips(request);
+    }
 
 
 
