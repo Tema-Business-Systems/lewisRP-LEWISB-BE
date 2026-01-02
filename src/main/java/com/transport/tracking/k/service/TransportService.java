@@ -659,7 +659,7 @@
                if(tripVO.getDrops() == 0 && tripVO.getPickups() > 0){
                    onlyReceipts = 2;
                    xloadflg_update = 1;
-                   
+
                    Appuser = vehroute.getDriverid();
                }else {
                    onlyReceipts = 1;

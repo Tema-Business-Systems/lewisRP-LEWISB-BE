@@ -74,6 +74,8 @@ public class VehRouteDetail {
       private String ywaitTime;
       @Column(name="XDOCSITE_0")
       private String xdocSite;
+      @Column(name="DELIVERY_DOC")
+      private String delviery_doc;
 
 
 }
