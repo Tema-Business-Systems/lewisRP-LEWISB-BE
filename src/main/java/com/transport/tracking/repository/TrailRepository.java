@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface TrailRepository extends CrudRepository<Trail, BigDecimal> {
 
-    public Trail findByTrailer(String trailer);
+    public  Trail findByTrailer(String trailer);
 
     public List<Trail> findByFcy(String site);
 

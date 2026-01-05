@@ -50,6 +50,8 @@
         @Autowired
         private UserSiteRepository userSiteRepository;
 
+        @Autowired
+        private ChangeLogEntityRepository changeLogRepository;
 
         //added for VR screen by Ashok
         @Autowired
@@ -113,7 +115,8 @@
         private String Latest_LVS_Format_02 = "LVS-{0}-{1}-{2}";
         private String Latest_VR_Format = "VR-{0}";
 
-
+        private static final String DOC_CANCELLED = "DocumentCancelled";
+        private static final String DOC_RESCHEDULED = "DocumentRescheduled";
         private String VR_NUMBER = "XVR-{0}-{1}-0{2}";
         private String TRIP_NUMBER = "XVR-{0}-{1}-{2}";
         private String SINGLE_DIGIT_VR_NUMBER = "XVR-{0}-{1}-00{2}";
@@ -361,6 +364,169 @@
                 e.printStackTrace();
             }
         }
+
+
+
+        public Map<String, String> syncLVSDataIntoTrips() {
+
+            Map<String, String> response = new HashMap<>();
+
+            int processedCount = 0;
+
+            List<ChangeLogEntity> pendingChanges = changeLogRepository.findByXoflg(1);
+
+            if (pendingChanges == null || pendingChanges.isEmpty()) {
+
+                response.put("status", "SUCCESS");
+                response.put("message", "No data exist to sync");
+                response.put("processedRecords", "0");
+
+                return response;
+            }
+
+            for (ChangeLogEntity change : pendingChanges) {
+
+                Trip trip = tripRepository.findByTripCode(change.getXnumpc());
+
+                if (trip == null) {
+                    // Optional: skip if trip not found
+                    continue;
+                }
+
+                switch (change.getDoctype()) {
+
+                    case 1:
+                        processDriverChange(trip, change);
+                        break;
+
+                    case 2:
+                        processTrailerChange(trip, change);
+                        break;
+
+                    case 3:
+                        processVehicleChange(trip, change);
+                        break;
+
+                    case 4:
+                        processDocumentUpdate(trip, change, DOC_CANCELLED);
+                        break;
+
+                    case 5:
+                        processDocumentUpdate(trip, change, DOC_RESCHEDULED);
+                        break;
+
+                    default:
+                        continue;
+                }
+
+                // Mark as processed
+                change.setXoflg(2);
+                changeLogRepository.save(change);
+
+                processedCount++;
+            }
+
+            response.put("status", "SUCCESS");
+            response.put("message", "Sync completed successfully");
+            response.put("processedRecords", String.valueOf(processedCount));
+
+            return response;
+        }
+
+        private void processTrailerChange(Trip trip,
+                                          ChangeLogEntity change) {
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            try {
+                // 1️⃣ Fetch trailer entity
+                Trail trail = trailRepository.findByTrailer(change.getLatestValue());
+
+                if (trail == null) {
+                    throw new RuntimeException(
+                            "Trailer not found: " + change.getLatestValue());
+                }
+
+                // 2️⃣ Convert entity → Map
+                Map<String, Object> trailerMap =
+                        mapper.convertValue(trail,
+                                new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {});
+
+                // 3️⃣ Wrap inside array (UI expects array)
+                List<Map<String, Object>> trailers = new ArrayList<>();
+                trailers.add(trailerMap);
+
+                // 4️⃣ Convert to JSON
+                String trailerJson = mapper.writeValueAsString(trailers);
+
+                // 5️⃣ Save into Trip
+                trip.setTrialer(trailerJson);
+                tripRepository.save(trip);
+
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to update trailer", e);
+            }
+        }
+
+        private void processDocumentUpdate(Trip trip,
+                                           ChangeLogEntity change,
+                                           String status) {
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            try {
+                // Parse totalObject JSON
+                Map<String, Object> totalObject =
+                        mapper.readValue(trip.getTotalObject(),
+                                new TypeReference<Map<String, Object>>() {});
+
+                // Extract selectedTripData
+                List<Map<String, Object>> selectedTripData =
+                        (List<Map<String, Object>>) totalObject.get("selectedTripData");
+
+                if (selectedTripData == null || selectedTripData.isEmpty()) {
+                    return;
+                }
+
+                // Match document number
+                for (Map<String, Object> tripData : selectedTripData) {
+
+                    String docNum = String.valueOf(tripData.get("docnum"));
+
+                    if (change.getDocnum().equals(docNum)) {
+
+                        tripData.put("updatedFlg", true);
+                        tripData.put("updatedStatus", status);
+
+                        break;
+                    }
+                }
+
+                // Write back JSON
+                trip.setTotalObject(mapper.writeValueAsString(totalObject));
+                tripRepository.save(trip);
+
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to update document status", e);
+            }
+        }
+
+
+
+        private void processVehicleChange(Trip trip,
+                                          ChangeLogEntity change) {
+
+            trip.setCode(change.getLatestValue());
+            tripRepository.save(trip);
+        }
+
+        private void processDriverChange(Trip trip,
+                                         ChangeLogEntity change) {
+
+            trip.setDriverId(change.getLatestValue());
+            tripRepository.save(trip);
+        }
+
 
 
         public Map<String, String> NonValidateTrips(TripVO tripVO) throws Exception {

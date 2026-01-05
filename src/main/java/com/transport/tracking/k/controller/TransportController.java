@@ -127,14 +127,19 @@ public class TransportController {
         return  transportService.NonValidateTrips(request);
     }
 
+    @PostMapping("/sync-data")
+    public ResponseEntity<Map<String, String>> syncData() {
 
+        Map<String, String> response = transportService.syncLVSDataIntoTrips();
+
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping ("/groupvalidate")
     public @ResponseBody Map<String, String> SubmitVRs(@RequestBody List<TripVO> request) throws Exception {
         //  log.info("inside Validate Controller");
         return  transportService.ValidateListofTrips(request);
     }
-
 
 
 
