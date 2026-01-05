@@ -367,7 +367,7 @@
 
 
 
-        public Map<String, String> syncLVSDataIntoTrips(AccessTokenVO accessTokenVO) {
+        public Map<String, String> syncLVSDataIntoTrips() {
 
             Map<String, String> response = new HashMap<>();
 

@@ -128,10 +128,9 @@ public class TransportController {
     }
 
     @PostMapping("/sync-data")
-    public ResponseEntity<Map<String, String>> syncData(
-            @RequestBody AccessTokenVO accessTokenVO) {
+    public ResponseEntity<Map<String, String>> syncData() {
 
-        Map<String, String> response = transportService.syncLVSDataIntoTrips(accessTokenVO);
+        Map<String, String> response = transportService.syncLVSDataIntoTrips();
 
         return ResponseEntity.ok(response);
     }
