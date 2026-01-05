@@ -439,16 +439,27 @@
             ObjectMapper mapper = new ObjectMapper();
 
             try {
-                // Replace existing trailers with new one
-                List<Map<String, String>> trailers = new ArrayList<>();
+                // 1️⃣ Fetch trailer entity
+                Trail trail = trailRepository.findByTrailer(change.getLatestValue());
 
-                Map<String, String> newTrailer = new HashMap<>();
-                newTrailer.put("trailer", change.getLatestValue());
-                trailers.add(newTrailer);
+                if (trail == null) {
+                    throw new RuntimeException(
+                            "Trailer not found: " + change.getLatestValue());
+                }
 
-                // Convert list → JSON string
+                // 2️⃣ Convert entity → Map
+                Map<String, Object> trailerMap =
+                        mapper.convertValue(trail,
+                                new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {});
+
+                // 3️⃣ Wrap inside array (UI expects array)
+                List<Map<String, Object>> trailers = new ArrayList<>();
+                trailers.add(trailerMap);
+
+                // 4️⃣ Convert to JSON
                 String trailerJson = mapper.writeValueAsString(trailers);
 
+                // 5️⃣ Save into Trip
                 trip.setTrialer(trailerJson);
                 tripRepository.save(trip);
 
@@ -456,7 +467,6 @@
                 throw new RuntimeException("Failed to update trailer", e);
             }
         }
-
 
         private void processDocumentUpdate(Trip trip,
                                            ChangeLogEntity change,
