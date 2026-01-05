@@ -300,26 +300,60 @@ public class AsyncService {
         return sb.toString();
     }
 
-    public List<TimeVO> getTimeList(String timeStr) {
-        List<TimeVO> timeList = new ArrayList<>();
-        try {
-            String actualTime = StringUtils.replace(timeStr, "0", "");
-            int time = Integer.parseInt(actualTime);
-            if(time > 23) {
+//    public List<TimeVO> getTimeList(String timeStr) {
+//        List<TimeVO> timeList = new ArrayList<>();
+//        try {
+//            String actualTime = StringUtils.replace(timeStr, "0", "");
+//            int time = Integer.parseInt(actualTime);
+//            if(time > 23) {
+//
+//            }else {
+//                for(int i = 0; i < hours; i ++) {
+//                    TimeVO timeVO = new TimeVO();
+//                    timeVO.setValue(String.valueOf(i * 12));
+//                    timeVO.setLabel(String.format("%s:%s", time + i, "00"));
+//                    timeList.add(timeVO);
+//                }
+//            }
+//        }catch (Exception e) {
+//            return this.getTimeList("0800");
+//        }
+//        return timeList;
+//    }
+public List<TimeVO> getTimeList(String timeStr) {
+    List<TimeVO> timeList = new ArrayList<>();
 
-            }else {
-                for(int i = 0; i < hours; i ++) {
-                    TimeVO timeVO = new TimeVO();
-                    timeVO.setValue(String.valueOf(i * 12));
-                    timeVO.setLabel(String.format("%s:%s", time + i, "00"));
-                    timeList.add(timeVO);
-                }
-            }
-        }catch (Exception e) {
-            return this.getTimeList("0800");
+    try {
+        if (!StringUtils.hasText(timeStr) || timeStr.length() != 4) {
+            timeStr = "0800";
         }
-        return timeList;
+
+        int startHour = Integer.parseInt(timeStr.substring(0, 2));
+        int startMin  = Integer.parseInt(timeStr.substring(2, 4));
+
+        if (startHour > 23 || startMin > 59) {
+            return getTimeList("0800");
+        }
+
+        int intervals = 24; // hourly timeline
+
+        for (int i = 0; i < intervals; i++) {
+            int totalMinutes = (startHour * 60 + startMin) + (i * 60);
+            int displayHour = (totalMinutes / 60) % 24;
+            int displayMin  = totalMinutes % 60;
+
+            TimeVO vo = new TimeVO();
+            vo.setValue(String.valueOf(totalMinutes));
+            vo.setLabel(String.format("%02d:%02d", displayHour, displayMin));
+            timeList.add(vo);
+        }
+
+    } catch (Exception e) {
+        return getTimeList("0800");
     }
+
+    return timeList;
+}
 
     public static void main(String[] arg) {
         AsyncService asyncService = new AsyncService();
