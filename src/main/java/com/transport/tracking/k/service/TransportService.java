@@ -2629,7 +2629,8 @@
 
 
         // constants / helper
-        private static final int VR_NUM_DIGITS = 7;
+        private static final int VR_SEQ_DIGITS = 3;
+
 
         private String getPrefixForSite(String site) {
             if ("1100".equals(site)) return "VRN";
@@ -2654,25 +2655,38 @@
         }
 
         // new generateVRCode
+//        private void generateVRCode(String site, Date date, Trip currentTrip) {
+//            String prefix = getPrefixForSite(site);
+//            System.out.println(prefix+" pregoiwheohosk");
+//            // candidate = DB max + 1
+//            int maxSuffix = getMaxSuffixForPrefix(prefix);
+//            int candidate = maxSuffix + 1;
+//
+//            String formatted = String.format("%0" + VR_NUM_DIGITS + "d", candidate);
+//            String tripCode = String.format("%s-%s", prefix, formatted);
+//
+//            currentTrip.setVrseq(candidate);
+//            currentTrip.setTripCode(tripCode);
+//
+//            // Trips = number of existing rows for same (code, date) + 1
+//            int existingTripsCount = tripRepository.countByCodeAndDocdate(currentTrip.getCode(), date);
+//            currentTrip.setTrips(existingTripsCount + 1);
+//        }
+
         private void generateVRCode(String site, Date date, Trip currentTrip) {
             String prefix = getPrefixForSite(site);
-
-            // candidate = DB max + 1
+            SimpleDateFormat sdf = new SimpleDateFormat("MMddyy");
+            String datePart = sdf.format(date);
             int maxSuffix = getMaxSuffixForPrefix(prefix);
             int candidate = maxSuffix + 1;
-
-            String formatted = String.format("%0" + VR_NUM_DIGITS + "d", candidate);
-            String tripCode = String.format("%s-%s", prefix, formatted);
-
+            String formattedSeq = String.format("%0" + VR_SEQ_DIGITS + "d", candidate);
+            String tripCode = String.format("%s-%s-%s-%s", prefix, datePart, site, formattedSeq);
             currentTrip.setVrseq(candidate);
             currentTrip.setTripCode(tripCode);
 
-            // Trips = number of existing rows for same (code, date) + 1
             int existingTripsCount = tripRepository.countByCodeAndDocdate(currentTrip.getCode(), date);
             currentTrip.setTrips(existingTripsCount + 1);
         }
-
-
 
 
 
