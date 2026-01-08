@@ -2638,13 +2638,14 @@
             return "VR";
         }
 
-        private int getMaxSuffixForPrefix(String prefix) {
+        private int getMaxSuffixForPrefix(String prefix, Date date) {
             int startIndex = prefix.length() + 2; // SQL 1-based start after 'PREFIX-'
             String sql = "SELECT MAX(TRY_CAST(SUBSTRING(TRIPCODE, " + startIndex + ", 100) AS INT)) " +
                     "FROM " + dbSchema + ".XX10TRIPS " +
-                    "WHERE TRIPCODE LIKE '" + prefix + "-%'";
+                    "WHERE TRIPCODE LIKE '" + prefix + "-%'"+
+                    "AND DOCDATE = :date";
             try {
-                Object res = entityManager.createNativeQuery(sql).getSingleResult();
+                Object res = entityManager.createNativeQuery(sql).setParameter("date", date).getSingleResult();
                 if (res == null) return 0;
                 if (res instanceof Number) return ((Number) res).intValue();
                 return Integer.parseInt(res.toString());
@@ -2677,7 +2678,7 @@
             String prefix = getPrefixForSite(site);
             SimpleDateFormat sdf = new SimpleDateFormat("MMddyy");
             String datePart = sdf.format(date);
-            int maxSuffix = getMaxSuffixForPrefix(prefix);
+            int maxSuffix = getMaxSuffixForPrefix(prefix, date);
             int candidate = maxSuffix + 1;
             String formattedSeq = String.format("%0" + VR_SEQ_DIGITS + "d", candidate);
             String tripCode = String.format("%s-%s-%s-%s", prefix, datePart, site, formattedSeq);
