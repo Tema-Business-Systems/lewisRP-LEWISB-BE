@@ -523,7 +523,10 @@
         private void processDriverChange(Trip trip,
                                          ChangeLogEntity change) {
 
+            Driver driver = driverRepository.findByDriverid(change.getLatestValue());
             trip.setDriverId(change.getLatestValue());
+            System.out.println(driver.getDriver()+"Check driver name is coming or not");
+            trip.setDriverName(driver.getDriver());
             tripRepository.save(trip);
         }
 
