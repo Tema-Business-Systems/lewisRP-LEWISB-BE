@@ -112,7 +112,8 @@
         private String TEXT_CLOB = "{0}{1}";
        // private String SINGLE_DIGIT_VR_NUMBER = "WVR-{0}-{1}-00{2}";
        private String Latest_LVS_Format = "LVS-{0}";
-        private String Latest_LVS_Format_02 = "LVS-{0}-{1}-{2}";
+//        private String Latest_LVS_Format_02 = "LVS-{0}-{1}-{2}";
+        private String Latest_LVS_Format_02 = "LVS-{1}-{0}-{2}";
         private String Latest_VR_Format = "VR-{0}";
 
         private static final String DOC_CANCELLED = "DocumentCancelled";
@@ -149,7 +150,8 @@
         private String DELTE_LVS_QUERY = "delete from {0}.{1} where XVRSEL_0 = ''{2}''";
         private String SELECT_LVS_QUERY = "SELECT * FROM {0}.{1} where XVRSEL_0 = ''{2}''";
 
-        private static SimpleDateFormat tripFormat = new SimpleDateFormat("YYMMdd");
+//        private static SimpleDateFormat tripFormat = new SimpleDateFormat("YYMMdd");
+        private static SimpleDateFormat tripFormat = new SimpleDateFormat("MMddyy");
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -1140,11 +1142,6 @@
             return latest_TEXCLOB;
         }
       private  String  generateLVScode(String site, int m,int y, Date date){
-
-
-
-
-
           List<LoadVehStock> loadVehStockList = loadVehStockRepository.findByStofcyAndXxiptdatOrderByVcrnumAsc(site, date);
           int count = 0;
           if (loadVehStockList.size() > 0) {
