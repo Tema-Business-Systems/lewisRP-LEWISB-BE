@@ -587,6 +587,7 @@ public class ReportCacheService {
         if (Objects.isNull(trip.getWeightPercentage())) {
             tripVO.setWeightPercentage(0d);
         }
+        tripVO.setGeneratedBy(trip.getGeneratedBy());
         if (org.apache.commons.lang3.StringUtils.isNotBlank(trip.getDepSite())) {
             //   log.info("Depsite");
             //   log.info(trip.getDepSite());

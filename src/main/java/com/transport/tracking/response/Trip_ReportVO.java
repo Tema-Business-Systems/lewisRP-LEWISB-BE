@@ -56,6 +56,7 @@ public class Trip_ReportVO {
       private String bgcolor;
       private String routeStatus;
       private String optistatus;
+      private String generatedBy;
 //      private Boolean lvsValidated;
 //      private Integer lvsStatus;
 }
