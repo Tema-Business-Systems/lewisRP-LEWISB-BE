@@ -18,7 +18,7 @@ public class Trip_ReportVO {
       private String driverName;
       private int trips;
       private int stops;
-      private int dlvystatus;
+      private Integer dlvystatus;
       private String lvsno;
       private String docdate;
       private String site;
@@ -54,5 +54,8 @@ public class Trip_ReportVO {
       private Object totalObject;
       private String color;
       private String bgcolor;
-
+      private String routeStatus;
+      private String optistatus;
+//      private Boolean lvsValidated;
+//      private Integer lvsStatus;
 }

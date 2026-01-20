@@ -631,15 +631,82 @@ public class ReportCacheService {
 
         LoadVehStock lvs = loadVehStockRepository.findByXvrsel(trip.getTripCode());
 
-        if(Objects.nonNull(lvs)) {
+//        if(Objects.nonNull(lvs)) {
+//            tripVO.setDlvystatus(lvs.getXloadflg());
+//            tripVO.setLvsno(lvs.getVcrnum());
+//        }
+//        else {
+//            tripVO.setDlvystatus(11);
+//            tripVO.setLvsno("");
+//        }
+
+        //start
+        if (lvs != null) {
+
             tripVO.setDlvystatus(lvs.getXloadflg());
             tripVO.setLvsno(lvs.getVcrnum());
-        }
-        else {
-            tripVO.setDlvystatus(11);
+
+            switch (lvs.getXloadflg()) {
+                case 1:
+                case 2:
+                    tripVO.setRouteStatus("To Load");
+                    break;
+                case 3:
+                    tripVO.setRouteStatus("Loaded");
+                    break;
+                case 4:
+                    tripVO.setRouteStatus("Confirmed");
+                    break;
+                case 5:
+                    tripVO.setRouteStatus("Trip Completed");
+                    break;
+                case 6:
+                    tripVO.setRouteStatus("Unloaded");
+                    break;
+                case 7:
+                    tripVO.setRouteStatus("Checked Out");
+                    break;
+                case 9:
+                    tripVO.setRouteStatus("Checked-In");
+                    break;
+                case 11:
+                    tripVO.setRouteStatus("Cancel");
+                    break;
+                case 12:
+                    tripVO.setRouteStatus("Route In Progress");
+                    break;
+                case 20:
+                    tripVO.setRouteStatus("To Allocate");
+                    break;
+                case 25:
+                    tripVO.setRouteStatus("In-Route");
+                    break;
+                default:
+                    tripVO.setRouteStatus("To Plan *");
+                    break;
+            }
+
+        } else {
+
+            // SAME fallback logic as first API
+            if (trip.getLock() == 1) {
+                tripVO.setRouteStatus("Locked");
+            } else if ("Open".equalsIgnoreCase(trip.getOptistatus())) {
+                tripVO.setRouteStatus("Open");
+            } else {
+                tripVO.setRouteStatus("Optimized");
+            }
+
+            tripVO.setDlvystatus(0);
             tripVO.setLvsno("");
         }
 
+        if (Objects.isNull(trip.getOptistatus())) {
+            tripVO.setOptistatus("Optimized");
+        } else {
+            tripVO.setOptistatus(trip.getOptistatus());
+        }
+        //end
         try {
             tripVO.setTotalObject(mapper.readValue(trip.getTotalObject(), Object.class));
         } catch (Exception e) {
