@@ -60,7 +60,7 @@ public class AsyncService {
     private String dbSchema;
     //private String dbSchema = "tbs.TMSBURBAN";
 
-    private String DORPS_QUERY = "select d.*, x.PRODUCTCODE, x.PRODUCTNAME,x.PRODUCTCATEG, x.QUANTITY, x.UOM, x.DOCLINENO, x.WEIGHT, x.WEU, x.VOLUME, x.VOU \n" +
+    private String DORPS_QUERY = "select d.*, x.PRODUCTCODE, x.PRODUCTNAME,x.PRODUCTCATEG, x.QUANTITY, x.UOM, x.DOCLINENO, x.WEIGHT, x.WEU, x.VOLUME AS LINE_VOLUME, x.VOU \n" +
             " from {0}.XTMSDROP d left join {0}.XTMSDROPD x on d.DOCNUM = x.DOCNUM where {1}";
 
     private String PICKUP_QUERY = "select d.*, x.PRODUCTCODE, x.PRODUCTNAME,x.PRODUCTCATEG, x.QUANTITY, x.UOM, x.DOCLINENO, x.WEIGHT, x.WEU, x.VOLUME, x.VOU \n" +
@@ -931,7 +931,7 @@ public List<TimeVO> getTimeList(String timeStr) {
         productVO.setUom(this.convertToString(map.get("UOM")));
         productVO.setWeight(this.convertToString(map.get("WEIGHT")));
         productVO.setWeu(this.convertToString(map.get("WEU")));
-        productVO.setVolume(this.convertToString(map.get("VOLUME")));
+        productVO.setVolume(this.convertToString(map.get("LINE_VOLUME")));
         productVO.setVou(this.convertToString(map.get("VOU")));
         return productVO;
     }
