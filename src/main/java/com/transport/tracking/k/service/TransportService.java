@@ -442,6 +442,8 @@
 
             try {
                 // 1️⃣ Fetch trailer entity
+                String trailerCode = change.getLatestValue();
+                log.info("Trailer from changelog = [{}]", trailerCode);
                 Trail trail = trailRepository.findByTrailer(change.getLatestValue());
 
                 if (trail == null) {
@@ -526,6 +528,11 @@
                                          ChangeLogEntity change) {
 
             Driver driver = driverRepository.findByDriverid(change.getLatestValue());
+            if (driver == null) {
+                throw new RuntimeException(
+                        "Driver not found for driverId: " + change.getLatestValue()
+                );
+            }
             trip.setDriverId(change.getLatestValue());
             System.out.println(driver.getDriver()+"Check driver name is coming or not");
             trip.setDriverName(driver.getDriver());
