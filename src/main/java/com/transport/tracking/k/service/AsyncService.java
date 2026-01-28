@@ -776,7 +776,7 @@ public List<TimeVO> getTimeList(String timeStr) {
         return totalString;
     }
 
-    @Async
+//    @Async
     public CompletableFuture<List<DropsVO>> getDrops(List<String> site, Date date, List<String> dropList, Map<String, String> dropsVehicleMap) {
         List<Drops> drops = null;
         List<DropsVO> dropsList = new ArrayList<>();
@@ -786,18 +786,11 @@ public List<TimeVO> getTimeList(String timeStr) {
         if(!StringUtils.isEmpty(site)) {
             resultList = jdbcTemplate.queryForList(MessageFormat.format(DORPS_QUERY, dbSchema,
                     MessageFormat.format(SITE_DATE, Sites, dateFormat.format(date))), paramMap);
-           // log.info(resultList);
-          //  drops =  dropsRepository.findByDocdate(date);
-
         }else {
             resultList = jdbcTemplate.queryForList(MessageFormat.format(DORPS_QUERY, dbSchema,
                     MessageFormat.format(ONLY_DATE, dateFormat.format(date))), paramMap);
-         //   drops = dropsRepository.findByDocdate(date);
-           // log.info(resultList);
         }
         if(!CollectionUtils.isEmpty(resultList)) {
-            /*dropsList = resultList.stream().map(a-> this.convertDrops(a))
-                    .collect(Collectors.toList());*/
             dropsList = this.convertDrops(resultList, dropList, dropsVehicleMap);
         }
         return CompletableFuture.completedFuture(dropsList);
@@ -805,16 +798,24 @@ public List<TimeVO> getTimeList(String timeStr) {
 
     private List<DropsVO> convertDrops(List<Map<String, Object>> list, List<String> dropsList, Map<String, String> dropsVehicleMap ) {
         Map<String, DropsVO> dropsMap = new HashMap<>();
+        Set<String> dropsSet = CollectionUtils.isEmpty(dropsList) ? Collections.emptySet() : new HashSet<>(dropsList);
         for(Map<String, Object> map: list) {
             String docNum = this.convertToString(map.get("DOCNUM"));
-            DropsVO dropsVO = null;
-            if(Objects.nonNull(dropsMap.get(docNum))) {
-                dropsVO = dropsMap.get(docNum);
-            }else {
+//            DropsVO dropsVO = null;
+//            if(Objects.nonNull(dropsMap.get(docNum))) {
+//                dropsVO = dropsMap.get(docNum);
+//            }else {
+//                dropsVO = new DropsVO();
+//            }
+            DropsVO dropsVO = dropsMap.get(docNum);
+            if (dropsVO == null) {
                 dropsVO = new DropsVO();
             }
             dropsVO.setDocnum(docNum);
-            if(dropsList.contains(docNum)) {
+//            if(dropsList.contains(docNum)) {
+//                dropsVO.setType(TransportConstants.ALLOCATED);
+//            }
+            if(dropsSet.contains(docNum)) {
                 dropsVO.setType(TransportConstants.ALLOCATED);
             }
             this.convertDrops(map, dropsVO, dropsVehicleMap);
