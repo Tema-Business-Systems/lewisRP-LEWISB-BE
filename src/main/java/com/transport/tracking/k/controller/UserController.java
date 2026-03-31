@@ -17,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -26,18 +25,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-//    @PostMapping ("/login")
-//    @Anonymous
-//    public @ResponseBody ResponseEntity<Object> login(@RequestBody UserVO userVO, HttpServletResponse response) {
-//        log.info("UserVO  ======== ", userVO);
-//        userVO = userService.login(userVO, response);
-//        if(Objects.isNull(userVO)) {            Map<String, String> map = new HashMap<>();
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map.put("message", "error"));
-//        }
-//        return ResponseEntity.status(HttpStatus.OK).body(userVO);
-//    }
-
 
     @PostMapping ("/login")
     @Anonymous
@@ -53,15 +40,12 @@ public class UserController {
         }
     }
 
-
-
     @GetMapping ("/logout")
     @Anonymous
     public @ResponseBody ResponseEntity<Object> logout(HttpServletResponse response) {
         userService.logOut(response);
         return ResponseEntity.status(HttpStatus.OK).body("sucess");
     }
-
 
     @GetMapping("/getusers")
     public ResponseEntity<List<UserDTO>> getUserList(AccessTokenVO accessTokenVO) {
