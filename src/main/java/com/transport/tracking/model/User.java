@@ -1,15 +1,14 @@
 package com.transport.tracking.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,9 +16,9 @@ import java.util.Date;
 @Table(name = "XX10CUSERS")
 public class User {
 
-      @Id
       @Column(name= "UPDTICK_0")
       private int updtick;
+      @Id
       @Column(name= "XAUS_0")
       private String xlogin;
       @Column(name= "XPWSD_0")
@@ -38,6 +37,31 @@ public class User {
       private String creusr;
       @Column(name= "UPDUSR_0")
       private String updusr;
+
+      @Column(name= "XEMAIL_0")
+      private String email;
+      @Column(name= "XPHN_0")
+      private String phone;
+      @Column(name= "XTEL_0")
+      private String tel;
+      @Column(name= "XLANMAIN_0")
+      private String lngmain;
+      @Column(name= "XLANSEC_0")
+      private String lansec;
+      @Column(name= "BPAADDLIG_0")
+      private String bpadd;
+      @Column(name= "BPAADDLIG_1")
+      private String bpadd1;
+      @Column(name= "BPAADDLIG_2")
+      private String bpadd2;
+      @Column(name= "POSCOD_0")
+      private String pincode;
+      @Column(name= "CTY_0")
+      private String city;
+      @Column(name= "SAT_0")
+      private String state;
+      @Column(name= "CRY_0")
+      private String country;
       @Column(name= "XRPFLG_0")
       private int routeplannerflg;
       @Column(name= "XSCHFLG_0")
@@ -56,17 +80,14 @@ public class User {
       private int addPicktcktflg;
       @Column(name= "XRMPCKFLG_0")
       private int removePicktcktflg;
-      @Column(name= "ROWID")
-      private BigDecimal rowid;
+
+      @Column(name = "ROWID", insertable = false, updatable = false)
+      private String rowid;
 
       public User() {
       }
 
-      /*@ManyToMany(cascade = { CascadeType.ALL })
-      @JoinTable(
-              name = "XX10CUSRROL",
-              joinColumns = { @JoinColumn(name = "XUSER_0") },
-              inverseJoinColumns = { @JoinColumn(name = "XROLE_0") }
-      )
-      private Set<Role> roles = new HashSet<>();*/
+      @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+      @JsonManagedReference
+      private List<UserAlignedSite> alignedSites;
 }

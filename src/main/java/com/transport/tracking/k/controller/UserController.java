@@ -1,7 +1,11 @@
 package com.transport.tracking.k.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.transport.tracking.k.annotation.Anonymous;
 import com.transport.tracking.k.service.UserService;
+import com.transport.tracking.model.User;
+import com.transport.tracking.response.AccessTokenVO;
+import com.transport.tracking.response.UserDTO;
 import com.transport.tracking.response.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -55,5 +60,43 @@ public class UserController {
     public @ResponseBody ResponseEntity<Object> logout(HttpServletResponse response) {
         userService.logOut(response);
         return ResponseEntity.status(HttpStatus.OK).body("sucess");
+    }
+
+
+    @GetMapping("/getusers")
+    public ResponseEntity<List<UserDTO>> getUserList(AccessTokenVO accessTokenVO) {
+        List<UserDTO> users = userService.listUsers();
+        return ResponseEntity.ok(users);
+    }
+
+    @PostMapping ("/create")
+    public @ResponseBody Map<String, String> createUsers(AccessTokenVO accessTokenVO, @RequestBody User user) throws JsonProcessingException {
+        User createdUser = userService.createUserWithAlignedSites(user);
+        Map<String, String> map = new HashMap<>();
+        map.put("success", "success");
+        return map;
+    }
+
+    @GetMapping("/{xlogin}")
+    public ResponseEntity<User> getUser(@PathVariable String xlogin) {
+        User user = userService.getUserWithAlignedSites(xlogin);
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/update/{xlogin}")
+    public ResponseEntity<User> updateUser(@PathVariable String xlogin, @RequestBody User userDetails) {
+        User updatedUser = userService.updateUserWithAlignedSites(xlogin, userDetails);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/delete/{xlogin}")
+    public ResponseEntity<String> deleteUser(@PathVariable String xlogin) {
+        userService.deleteUserWithAlignedSites(xlogin);
+        return ResponseEntity.ok("User and aligned sites deleted successfully");
+    }
+
+    @GetMapping("/list")
+    public List<User> listUsers() {
+        return userService.listfullUsers();
     }
 }
