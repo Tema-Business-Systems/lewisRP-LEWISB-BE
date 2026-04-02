@@ -1,35 +1,38 @@
 package com.transport.ReportsApis.Controller;
-
 import com.transport.ReportsApis.Entity.TripHeader;
-import com.transport.ReportsApis.Service.TripService;
+import com.transport.ReportsApis.Response.KpiTransportationResponse;
+import com.transport.ReportsApis.Service.ReportsService;
 import com.transport.tracking.response.AccessTokenVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/report")
 @RequiredArgsConstructor
-public class TripController {
+public class ReportsController {
 
-    private final TripService tripService;
+    private final ReportsService reportsService;
 
     @GetMapping("/allTrips")
     public List<TripHeader> getAllTrips() {
-        return tripService.getAllTrips();
+        return reportsService.getAllTrips();
     }
 
     @GetMapping("/{tripid}")
     public TripHeader getTrip(@PathVariable String tripid) {
-        return tripService.getTripById(tripid);
+        return reportsService.getTripById(tripid);
     }
 
     @GetMapping("/getBySiteandDate")
     public List<TripHeader> getBySiteAndDate(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return tripService.getTripsBySiteAndDate(site, date);
+        return reportsService.getTripsBySiteAndDate(site, date);
+    }
+
+    @GetMapping("/kpiReports")
+    public KpiTransportationResponse getKpiReports() {
+        return reportsService.getKpiTransportation();
     }
 }

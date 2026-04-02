@@ -10,4 +10,5 @@ import java.util.List;
 
 @Repository
 public interface TripHeaderRepository extends JpaRepository<TripHeader, String> {
-    List<TripHeader> findBySiteInAndDate(List<String> site, Date date);}
+    List<TripHeader> findBySiteInAndDate(List<String> site, Date date);
+}
