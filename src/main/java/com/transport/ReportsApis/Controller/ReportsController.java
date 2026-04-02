@@ -1,6 +1,7 @@
 package com.transport.ReportsApis.Controller;
 import com.transport.ReportsApis.Entity.TripHeader;
 import com.transport.ReportsApis.Response.KpiTransportationResponse;
+import com.transport.ReportsApis.Response.RouteListResponse;
 import com.transport.ReportsApis.Service.ReportsService;
 import com.transport.tracking.response.AccessTokenVO;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,10 @@ public class ReportsController {
     @GetMapping("/kpiReports")
     public KpiTransportationResponse getKpiReports() {
         return reportsService.getKpiTransportation();
+    }
+
+    @GetMapping("/routeList")
+    public RouteListResponse getRouteList(@RequestParam(name = "site") List<String> site, @RequestParam(name = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from, @RequestParam(name = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to) {
+        return reportsService.getRouteList(site, from, to);
     }
 }

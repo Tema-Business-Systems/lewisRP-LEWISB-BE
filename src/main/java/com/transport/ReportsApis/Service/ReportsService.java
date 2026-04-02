@@ -1,12 +1,9 @@
 package com.transport.ReportsApis.Service;
 
-import com.transport.ReportsApis.Entity.KpiTransportation;
-import com.transport.ReportsApis.Entity.KpiTransportationDetail;
-import com.transport.ReportsApis.Entity.TripHeader;
-import com.transport.ReportsApis.Repo.KpiTransportationDetailRepository;
-import com.transport.ReportsApis.Repo.KpiTransportationRepository;
-import com.transport.ReportsApis.Repo.TripHeaderRepository;
+import com.transport.ReportsApis.Entity.*;
+import com.transport.ReportsApis.Repo.*;
 import com.transport.ReportsApis.Response.KpiTransportationResponse;
+import com.transport.ReportsApis.Response.RouteListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -19,6 +16,8 @@ public class ReportsService{
     private final TripHeaderRepository tripHeaderRepository;
     private final KpiTransportationRepository chartRepo;
     private final KpiTransportationDetailRepository detailRepo;
+    private final RouteListHeaderRepo headerRepo;
+    private final RouteListDocsRepo docsRepo;
 
     public List<TripHeader> getAllTrips() {
         return tripHeaderRepository.findAll();
@@ -68,6 +67,52 @@ public class ReportsService{
         response.setSites(
                 chart.stream().map(c -> c.getId().getSite()).distinct().collect(Collectors.toList())
         );
+        return response;
+    }
+
+    public RouteListResponse getRouteList(List<String> site, Date from, Date to) {
+        List<RouteListHeader> headers = headerRepo.findBySiteInAndTripDateBetween(site, from, to);
+        List<String> tripIds = headers.stream().map(RouteListHeader::getId).collect(Collectors.toList());
+        List<RouteListDocs> docs = docsRepo.findByTripidIn(tripIds);
+        Map<String, List<RouteListDocs>> docsMap = docs.stream().collect(Collectors.groupingBy(RouteListDocs::getTripid));
+        RouteListResponse response = new RouteListResponse();
+        response.setRecords(headers.stream().map(h -> {
+            RouteListResponse.Record r = new RouteListResponse.Record();
+            r.setId(h.getId());
+            r.setRouteCode(h.getRouteCode());
+            r.setVehicle(h.getVehicle());
+            r.setTrip(h.getTrip());
+            r.setDriverId(h.getDriverId());
+            r.setCarrier("INTERNAL");
+            r.setSite(h.getSite());
+            r.setSchedDepDate(h.getSchedDepDate());
+            r.setSchedDepTime(h.getSchedDepTime());
+            r.setSchedRetDate(h.getSchedRetDate());
+            r.setSchedRetTime(h.getSchedRetTime());
+            r.setCorrDepDate(h.getCorrDepDate());
+            r.setCorrDepTime(h.getCorrDepTime());
+            r.setCorrRetDate(h.getCorrRetDate());
+            r.setCorrRetTime(h.getCorrRetTime());
+            r.setActDepDate(h.getActDepDate());
+            r.setActDepTime(h.getActDepTime());
+            r.setActRetDate(h.getActRetDate());
+            r.setActRetTime(h.getActRetTime());
+            r.setDistanceKm(h.getDistanceKm());
+            r.setTimeH(h.getTimeH());
+
+            List<RouteListResponse.Document> documents = docsMap.getOrDefault(h.getId(), Collections.emptyList()).stream().map(d -> {
+            RouteListResponse.Document doc = new RouteListResponse.Document();
+            doc.setSequence(d.getSequence());
+            doc.setDocumentNo(d.getDocumentNo());
+            doc.setDocType(d.getDocType());
+            doc.setArvTime(d.getArvTime());
+            doc.setDepTime(d.getDepTime());
+            doc.setStatus(d.getStatus());
+            return doc;
+        }).collect(Collectors.toList());
+            r.setDocuments(documents);
+            return r;
+        }).collect(Collectors.toList()));
         return response;
     }
 }
