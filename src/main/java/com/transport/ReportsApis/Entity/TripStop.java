@@ -37,6 +37,10 @@ public class TripStop {
     private Integer status;
     @Column(name = "SERVICETIME")
     private String servicetime;
+    @Column(name = "customer_name")
+    private String customerName;
+    @Column(name = "customer_code")
+    private String customerCode;
     @Column(name = "lat")
     private String lat;
     @Column(name = "lng")
