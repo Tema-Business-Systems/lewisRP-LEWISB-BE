@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.transport.ReportsApis.Entity.*;
 import com.transport.ReportsApis.Repo.*;
-import com.transport.ReportsApis.Response.DashboardReportResponse;
-import com.transport.ReportsApis.Response.KpiTransportationResponse;
-import com.transport.ReportsApis.Response.PodTrackingDTO;
-import com.transport.ReportsApis.Response.RouteListResponse;
+import com.transport.ReportsApis.Response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -29,6 +26,7 @@ public class ReportsService{
     private final PodImagesRepository imageRepo;
     private final DashboardReportRepository dashRepository;
     private final ObjectMapper objectMapper;
+    private final OrderCalendarRepository orderRepo;
 
     public List<TripHeader> getAllTrips() {
         return tripHeaderRepository.findAll();
@@ -167,5 +165,34 @@ public class ReportsService{
             return response;
 
         }).toList();
+    }
+
+    public List<OrderCalendarDTO> getAllOrders() {
+        return orderRepo.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private OrderCalendarDTO convertToDTO(OrderCalendar entity) {
+        OrderCalendarDTO dto = new OrderCalendarDTO();
+        dto.setId(entity.getId());
+        dto.setOrderNumber(entity.getOrderNumber());
+        dto.setSite(entity.getSite());
+        dto.setCustomer(entity.getCustomer());
+        dto.setCustomerName(entity.getCustomerName());
+        dto.setOrderType(entity.getOrderType());
+        dto.setStatus(entity.getStatus());
+        dto.setOrderDate(entity.getOrderDate());
+        dto.setOrderTime(entity.getOrderTime());
+        dto.setRouteNumber(entity.getRouteNumber());
+        dto.setVehicle(entity.getVehicle());
+        dto.setDriver(entity.getDriver());
+        dto.setOrigin(entity.getOrigin());
+        dto.setDestination(entity.getDestination());
+        dto.setTotalPacks(entity.getTotalPacks());
+        dto.setTotalWeight(entity.getTotalWeight());
+        dto.setProducts(entity.getProducts());
+        return dto;
     }
 }

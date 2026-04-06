@@ -1,10 +1,7 @@
 package com.transport.ReportsApis.Controller;
 import com.transport.ReportsApis.Entity.DashboardReport;
 import com.transport.ReportsApis.Entity.TripHeader;
-import com.transport.ReportsApis.Response.DashboardReportResponse;
-import com.transport.ReportsApis.Response.KpiTransportationResponse;
-import com.transport.ReportsApis.Response.PodTrackingDTO;
-import com.transport.ReportsApis.Response.RouteListResponse;
+import com.transport.ReportsApis.Response.*;
 import com.transport.ReportsApis.Service.ReportsService;
 import com.transport.tracking.response.AccessTokenVO;
 import lombok.RequiredArgsConstructor;
@@ -53,5 +50,10 @@ public class ReportsController {
     @GetMapping("/dashboard")
     public List<DashboardReportResponse> getDashboardReport() {
         return reportsService.getDashboardReport();
+    }
+
+    @GetMapping("/orderDetail")
+    public List<OrderCalendarDTO> getAllOrders() {
+        return reportsService.getAllOrders();
     }
 }
