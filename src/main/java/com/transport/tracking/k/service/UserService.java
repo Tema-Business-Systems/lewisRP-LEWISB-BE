@@ -191,6 +191,10 @@ public class UserService {
         userDetails.getAlignedSites().forEach(site -> {
             site.setUser(user);
             site.setAuuid(uuidToBytes(UUID.randomUUID()));
+            site.setCredattim(new Date());
+            site.setCreusr(user.getXlogin());
+            site.setUpddattim(new Date());
+            site.setUpdusr(user.getXlogin());
         });
         user.getAlignedSites().addAll(userDetails.getAlignedSites());
         return userRepository.save(user);
