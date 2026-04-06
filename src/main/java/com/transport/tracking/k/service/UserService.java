@@ -171,6 +171,7 @@ public class UserService {
         user.setXpswd(userDetails.getXpswd());
         user.setXact(userDetails.getXact());
         user.setUpddattim(new Date());
+        user.setAuuid(uuidToBytes(UUID.randomUUID()));
         List<String> existingSites = new ArrayList<>();
         user.getAlignedSites().forEach(site->{
             existingSites.add(site.getFcy());
