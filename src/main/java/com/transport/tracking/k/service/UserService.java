@@ -188,7 +188,10 @@ public class UserService {
             });
         }
         user.getAlignedSites().clear();
-        userDetails.getAlignedSites().forEach(site -> site.setUser(user));
+        userDetails.getAlignedSites().forEach(site -> {
+            site.setUser(user);
+            site.setAuuid(uuidToBytes(UUID.randomUUID()));
+        });
         user.getAlignedSites().addAll(userDetails.getAlignedSites());
         return userRepository.save(user);
     }

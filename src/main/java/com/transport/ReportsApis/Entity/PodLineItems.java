@@ -5,18 +5,18 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "V_POD_LINE_ITEMS", schema = "LEWISB")
+@IdClass(PodLineItemsId.class)
 @Getter
 @Setter
 public class PodLineItems {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "document")
     private String document;
     @Column(name = "docNum")
     private String docNum;
     @Column(name = "orderNumber")
     private String orderNumber;
+    @Id
     @Column(name = "productId")
     private String productId;
     @Column(name = "description")

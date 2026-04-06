@@ -7,6 +7,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "V_POD_TRACKING", schema = "LEWISB")
 @Getter
@@ -22,7 +24,7 @@ public class PodTracking {
     @Column(name = "document")
     private String document;
     @Column(name = "date")
-    private String date;
+    private Date date;
     @Column(name = "type")
     private String type;
     @Column(name = "status")

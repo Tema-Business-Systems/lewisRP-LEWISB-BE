@@ -5,14 +5,14 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "V_POD_PRODUCTS", schema = "LEWISB")
+@IdClass(PodProductsId.class)
 @Getter
 @Setter
 public class PodProducts {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "deliveryNum")
     private String deliveryNum;
+    @Id
     @Column(name = "product")
     private String product;
     @Column(name = "orderedQty")

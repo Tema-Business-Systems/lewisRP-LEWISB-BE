@@ -1,6 +1,7 @@
 package com.transport.ReportsApis.Controller;
 import com.transport.ReportsApis.Entity.TripHeader;
 import com.transport.ReportsApis.Response.KpiTransportationResponse;
+import com.transport.ReportsApis.Response.PodTrackingDTO;
 import com.transport.ReportsApis.Response.RouteListResponse;
 import com.transport.ReportsApis.Service.ReportsService;
 import com.transport.tracking.response.AccessTokenVO;
@@ -40,5 +41,10 @@ public class ReportsController {
     @GetMapping("/routeList")
     public RouteListResponse getRouteList(@RequestParam(name = "site") List<String> site, @RequestParam(name = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from, @RequestParam(name = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to) {
         return reportsService.getRouteList(site, from, to);
+    }
+
+    @GetMapping("/podTracking")
+    public List<PodTrackingDTO> getPodTracking(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom, @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return reportsService.getPodTracking(site, dateFrom, dateTo);
     }
 }

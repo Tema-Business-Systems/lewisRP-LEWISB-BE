@@ -3,8 +3,10 @@ package com.transport.ReportsApis.Service;
 import com.transport.ReportsApis.Entity.*;
 import com.transport.ReportsApis.Repo.*;
 import com.transport.ReportsApis.Response.KpiTransportationResponse;
+import com.transport.ReportsApis.Response.PodTrackingDTO;
 import com.transport.ReportsApis.Response.RouteListResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,6 +20,10 @@ public class ReportsService{
     private final KpiTransportationDetailRepository detailRepo;
     private final RouteListHeaderRepo headerRepo;
     private final RouteListDocsRepo docsRepo;
+    private final PodTrackingRepository repository;
+    private final PodLineItemsRepository lineRepo;
+    private final PodProductsRepository productRepo;
+    private final PodImagesRepository imageRepo;
 
     public List<TripHeader> getAllTrips() {
         return tripHeaderRepository.findAll();
@@ -114,5 +120,21 @@ public class ReportsService{
             return r;
         }).collect(Collectors.toList()));
         return response;
+    }
+
+    public List<PodTrackingDTO> getPodTracking(List<String> site,  Date dateFrom, Date dateTo) {
+        List<PodTracking> list = repository.findBySiteInAndDateBetween(site, dateFrom, dateTo);
+        return list.stream().map(p -> {
+            PodTrackingDTO dto = new PodTrackingDTO();
+            BeanUtils.copyProperties(p, dto);
+            dto.setLineItems(lineRepo.findByDocument(p.getDocument()));
+            dto.setPodProducts(productRepo.findByDeliveryNum(p.getDocument()));
+            dto.setPodImages(imageRepo.findByDocument(p.getDocument())
+                .stream()
+                .filter(Objects::nonNull)
+                .toList()
+            );
+            return dto;
+        }).toList();
     }
 }
