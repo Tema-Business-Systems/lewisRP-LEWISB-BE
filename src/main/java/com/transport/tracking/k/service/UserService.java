@@ -112,9 +112,15 @@ public class UserService {
 
 
     public User createUserWithAlignedSites(User user) {
+        user.setAuuid(UUID.randomUUID().toString().getBytes());
         user.setCredattim(new Date());
         user.setUpddattim(new Date());
-        user.getAlignedSites().forEach(site -> site.setUser(user) );
+        user.getAlignedSites().forEach(site -> {
+            site.setUser(user);
+            site.setAuuid(UUID.randomUUID().toString().getBytes());
+            site.setCredattim(new Date());
+            site.setUpddattim(new Date());
+        } );
         return userRepository.save(user);
     }
 
