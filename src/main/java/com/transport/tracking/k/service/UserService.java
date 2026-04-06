@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.nio.ByteBuffer;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,14 +111,19 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-
+    private byte[] uuidToBytes(UUID uuid) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        return bb.array();
+    }
     public User createUserWithAlignedSites(User user) {
-        user.setAuuid(UUID.randomUUID().toString().getBytes());
+        user.setAuuid(uuidToBytes(UUID.randomUUID()));
         user.setCredattim(new Date());
         user.setUpddattim(new Date());
         user.getAlignedSites().forEach(site -> {
             site.setUser(user);
-            site.setAuuid(UUID.randomUUID().toString().getBytes());
+            site.setAuuid(uuidToBytes(UUID.randomUUID()));
             site.setCredattim(new Date());
             site.setUpddattim(new Date());
         } );
