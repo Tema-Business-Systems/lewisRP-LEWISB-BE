@@ -1,7 +1,10 @@
 package com.transport.ReportsApis.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.transport.ReportsApis.Entity.*;
 import com.transport.ReportsApis.Repo.*;
+import com.transport.ReportsApis.Response.DashboardReportResponse;
 import com.transport.ReportsApis.Response.KpiTransportationResponse;
 import com.transport.ReportsApis.Response.PodTrackingDTO;
 import com.transport.ReportsApis.Response.RouteListResponse;
@@ -24,6 +27,8 @@ public class ReportsService{
     private final PodLineItemsRepository lineRepo;
     private final PodProductsRepository productRepo;
     private final PodImagesRepository imageRepo;
+    private final DashboardReportRepository dashRepository;
+    private final ObjectMapper objectMapper;
 
     public List<TripHeader> getAllTrips() {
         return tripHeaderRepository.findAll();
@@ -135,6 +140,32 @@ public class ReportsService{
                 .toList()
             );
             return dto;
+        }).toList();
+    }
+
+    public List<DashboardReportResponse> getDashboardReport() {
+        List<DashboardReport> reports = dashRepository.findAll();
+        return reports.stream().map(report -> {
+            DashboardReportResponse response = new DashboardReportResponse();
+            try {
+                response.setMetrics(
+                        objectMapper.readValue(report.getMetrics(), new TypeReference<List<Map<String, Object>>>() {}
+                        )
+                );
+                response.setActiveRoutes(
+                        objectMapper.readValue(report.getActiveRoutes(), new TypeReference<List<Map<String, Object>>>() {}
+                        )
+                );
+
+                response.setVehicleLocations(
+                        objectMapper.readValue(report.getVehicleLocations(), new TypeReference<List<Map<String, Object>>>() {}
+                        )
+                );
+            } catch (Exception e) {
+                throw new RuntimeException("Error parsing dashboard JSON", e);
+            }
+            return response;
+
         }).toList();
     }
 }
