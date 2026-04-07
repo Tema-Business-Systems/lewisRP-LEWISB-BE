@@ -45,4 +45,6 @@ public class TripStop {
     private String lat;
     @Column(name = "lng")
     private String lng;
+    @Column(name = "delivery")
+    private String delivery;
 }
