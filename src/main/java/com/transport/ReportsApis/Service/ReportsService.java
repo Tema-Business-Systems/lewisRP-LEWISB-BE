@@ -34,6 +34,7 @@ public class ReportsService{
     private final DailyRouteSummaryRepository dailyRouteRepo;
     private final DriverActivitySummaryRepository summaryRepo;
     private final DriverActivityTimelineRepository timelineRepo;
+    private final CustomerServiceRepository custRepo;
 
     public List<TripHeader> getAllTrips() {
         return tripHeaderRepository.findAll();
@@ -323,6 +324,42 @@ public class ReportsService{
                             t.getEndTime() != null ? t.getEndTime().toString() : null, t.getDurationMin()));
         }
         response.setTimeline(new ArrayList<>(map.values()));
+        return response;
+    }
+
+    public CustomerServiceResponseDTO getCustomerServiceData() {
+        List<CustomerServiceLog> data = custRepo.findAll().stream().filter(Objects::nonNull).toList();
+        CustomerServiceResponseDTO response = new CustomerServiceResponseDTO();
+        SummaryDataDTO summary = new SummaryDataDTO();
+        long customersServiced = data.size();
+        long cashAccounts = data.stream().filter(d -> d.getAccountType() != null).filter(d -> "Cash".equalsIgnoreCase(d.getAccountType())).count();
+        long chargeAccounts = data.stream().filter(d -> d.getAccountType() != null).filter(d -> "Charge".equalsIgnoreCase(d.getAccountType())).count();
+        long skipped = data.stream().filter(d -> d.getStatus() != null).filter(d -> "Missed".equalsIgnoreCase(d.getStatus())).count();
+        summary.setCustomersServiced(new SummaryItemDTO((int) customersServiced, "active delivery day"));
+        summary.setCashAccounts(new SummaryItemDTO((int) cashAccounts, "cash collection enabled"));
+        summary.setChargeAccounts(new SummaryItemDTO((int) chargeAccounts, "majority of route"));
+        summary.setSkippedMissed(new SummaryItemDTO((int) skipped, "needs follow-up"));
+        response.setSummary(summary);
+
+        FiltersDTO filters = new FiltersDTO();
+        filters.setDrivers(data.stream().map(CustomerServiceLog::getDriver).filter(Objects::nonNull).distinct().collect(Collectors.toList()));
+        filters.setAccountTypes(data.stream().map(CustomerServiceLog::getAccountType).filter(Objects::nonNull).distinct().collect(Collectors.toList()));
+        response.setFilters(filters);
+
+        List<CustomerServiceDetailsDTO> details = data.stream().map(d -> {
+                    CustomerServiceDetailsDTO dto = new CustomerServiceDetailsDTO();
+                    dto.setAccountNo(d.getAcctNo());
+                    dto.setCustomer(d.getCustomer());
+                    dto.setAccountType(d.getAccountType());
+                    dto.setDriver(d.getDriver());
+                    dto.setDelivery(d.getDeliveryStatus());
+                    dto.setOrderChange(d.getOrderChange());
+                    dto.setAdvanceOrder(d.getAdvOrder());
+                    dto.setPayment(d.getPayment());
+                    dto.setStatus(d.getStatus());
+                    return dto;
+                }).collect(Collectors.toList());
+        response.setCustomerServiceDetails(details);
         return response;
     }
 }

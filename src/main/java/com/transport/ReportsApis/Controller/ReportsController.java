@@ -66,4 +66,9 @@ public class ReportsController {
     public DriverActivityResponseDTO getDriverActivity(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
         return reportsService.getDriverActivity(site, date);
     }
+
+    @GetMapping("/customerService")
+    public CustomerServiceResponseDTO getCustomerService() {
+        return reportsService.getCustomerServiceData();
+    }
 }
