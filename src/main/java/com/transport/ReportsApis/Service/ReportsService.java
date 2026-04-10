@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +32,8 @@ public class ReportsService{
     private final ObjectMapper objectMapper;
     private final OrderCalendarRepository orderRepo;
     private final DailyRouteSummaryRepository dailyRouteRepo;
+    private final DriverActivitySummaryRepository summaryRepo;
+    private final DriverActivityTimelineRepository timelineRepo;
 
     public List<TripHeader> getAllTrips() {
         return tripHeaderRepository.findAll();
@@ -285,4 +288,41 @@ public class ReportsService{
         }).toList();
     }
 
+
+    public DriverActivityResponseDTO getDriverActivity(List<String> site, Date date) {
+        List<DriverActivitySummary> summaryList = summaryRepo.getByDate(date);
+        List<DriverActivityTimeline> timelineList = timelineRepo.getBySiteAndDate(site, date);
+        DriverActivityResponseDTO response = new DriverActivityResponseDTO();
+        response.setDate(date != null ? new SimpleDateFormat("yyyy-MM-dd").format(date) : null);
+        response.setSite(site != null ? site.get(0) : null);
+        // SUMMARY
+        if (summaryList != null && !summaryList.isEmpty() && summaryList.get(0) != null) {
+            DriverActivitySummary s = summaryList.get(0);
+            SummaryDTO summaryDTO = new SummaryDTO();
+            summaryDTO.setAvgHoursDriven(new MetricDTO(s.getAvgHoursDriven(), "hours", "steady this week", null));
+            summaryDTO.setStopsPerDay(new MetricDTO(s.getStopsPerDay(), null, "+2 vs average", null));
+            summaryDTO.setAvgVisitDuration(new MetricDTO(s.getAvgVisitDuration(), "min", null, "within SLA"));
+            summaryDTO.setIdleRatio(new MetricDTO(s.getIdleRatio(), "%", "-1.5% improvement", null));
+            response.setSummary(summaryDTO);
+        }
+
+        // TIMELINE GROUPING
+        Map<String, TimelineDTO> map = new LinkedHashMap<>();
+        for (DriverActivityTimeline t : timelineList) {
+            String key = t.getDriver() + "_" + t.getVehicle();
+            TimelineDTO dto = map.computeIfAbsent(key, k -> {
+                TimelineDTO d = new TimelineDTO();
+                d.setDriver(t.getDriver());
+                d.setVehicle(t.getVehicle());
+                d.setActivities(new ArrayList<>());
+                return d;
+            });
+            dto.getActivities().add(new ActivityDTO(
+                            t.getActivityType(),
+                            t.getStartTime() != null ? t.getStartTime().toString() : null,
+                            t.getEndTime() != null ? t.getEndTime().toString() : null, t.getDurationMin()));
+        }
+        response.setTimeline(new ArrayList<>(map.values()));
+        return response;
+    }
 }
