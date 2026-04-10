@@ -11,13 +11,16 @@ import java.util.List;
 
 @Repository
 public interface DailyRouteSummaryRepository extends JpaRepository<DailyRouteSummary, String> {
+
     @Query(value = """
         SELECT *
         FROM LEWISB.VW_DAILY_ROUTE_SUMMARY
-        WHERE (:sites IS NULL OR SITE IN (:sites))
+        WHERE SITE IN (:sites)
         AND (:date IS NULL 
              OR (ROUTEDATE >= :date 
              AND ROUTEDATE < DATEADD(day, 1, :date)))
     """, nativeQuery = true)
-    List<DailyRouteSummary> findBySiteAndDate(@Param("sites") List<String> sites, @Param("date") Date date);
+    List<DailyRouteSummary> findBySiteAndDate(
+            @Param("sites") List<String> sites,
+            @Param("date") Date date);
 }
