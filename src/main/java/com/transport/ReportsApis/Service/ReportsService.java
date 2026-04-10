@@ -8,6 +8,9 @@ import com.transport.ReportsApis.Response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,7 @@ public class ReportsService{
     private final DashboardReportRepository dashRepository;
     private final ObjectMapper objectMapper;
     private final OrderCalendarRepository orderRepo;
+    private final DailyRouteSummaryRepository dailyRouteRepo;
 
     public List<TripHeader> getAllTrips() {
         return tripHeaderRepository.findAll();
@@ -195,4 +199,90 @@ public class ReportsService{
         dto.setProducts(entity.getProducts());
         return dto;
     }
+
+    public DailyRouteDashboardResponse getDailyRouteDashboard(List<String> sites, Date date) {
+        if (sites != null && sites.isEmpty()) {
+            sites = null;
+        }
+        List<DailyRouteSummary> data = dailyRouteRepo.findBySiteAndDate(sites, date);
+        DailyRouteDashboardResponse response = new DailyRouteDashboardResponse();
+        response.setDate(date == null ? null : date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        response.setSite(sites == null ? "ALL" : String.join(",", sites));
+        response.setSummary(buildSummary(data));
+        response.setDriverPerformance(buildDriverPerformance(data));
+        response.setDayActivity(buildDayActivity(data));
+        response.setRouteDetails(buildRouteDetails(data));
+        return response;
+    }
+
+    private Summary buildSummary(List<DailyRouteSummary> data) {
+        Summary summary = new Summary();
+        CustomersServiced cs = new CustomersServiced();
+        cs.setValue(data.stream().map(DailyRouteSummary::getCustomerCode).filter(Objects::nonNull).distinct().count());
+        summary.setCustomersServiced(cs);
+        BigDecimal total = data.stream().map(d -> d.getAmount() == null ? BigDecimal.ZERO : d.getAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        TotalSales sales = new TotalSales();
+        sales.setValue(total);
+        sales.setCurrency(data.stream().map(DailyRouteSummary::getCurrencyUnit).filter(Objects::nonNull).findFirst().orElse("USD"));
+        summary.setTotalSales(sales);
+        summary.setCollections(sales);
+        return summary;
+    }
+
+    private List<DriverPerformance> buildDriverPerformance(List<DailyRouteSummary> data) {
+        return data.stream().filter(d -> d.getDriver() != null).collect(Collectors.groupingBy(DailyRouteSummary::getDriver))
+                .entrySet().stream().map(entry -> {
+                    DriverPerformance dp = new DriverPerformance();
+                    dp.setDriverId(entry.getKey());
+                    dp.setVehicle(entry.getValue().get(0).getVehicle());
+                    dp.setDeliveries((long) entry.getValue().size());
+                    BigDecimal total = entry.getValue().stream().map(d -> d.getAmount() == null ? BigDecimal.ZERO : d.getAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    dp.setTotalSales(total);
+                    return dp;
+                }).toList();
+    }
+
+    private List<DayActivity> buildDayActivity(List<DailyRouteSummary> data) {
+        return data.stream()
+                .filter(d -> d.getDriver() != null && d.getRouteNo() != null)
+                .collect(Collectors.groupingBy(d -> d.getDriver() + "_" + d.getRouteNo()))
+                .entrySet().stream().map(entry -> {
+                    DailyRouteSummary d = entry.getValue().get(0);
+                    DayActivity da = new DayActivity();
+                    da.setDriverId(d.getDriver());
+                    da.setRouteNo(d.getRouteNo());
+                    da.setDeliveries((long) entry.getValue().size());
+                    return da;
+                }).toList();
+    }
+
+    private List<RouteDetails> buildRouteDetails(List<DailyRouteSummary> data) {
+        return data.stream().map(d -> {
+            RouteDetails rd = new RouteDetails();
+            rd.setRouteNo(d.getRouteNo());
+            rd.setRouteDate(d.getRouteDate());
+            rd.setDriver(d.getDriver());
+            rd.setVehicle(d.getVehicle());
+            rd.setSite(d.getSite());
+            rd.setOrderNo(d.getOrderNo());
+            rd.setDeliveryNo(d.getDeliveryNo());
+            rd.setSequence(d.getSequence());
+            rd.setStatus(d.getStatus());
+            rd.setCustomerCode(d.getCustomerCode());
+            rd.setCustomerName(d.getCustomer());
+            rd.setCity(d.getCity());
+            rd.setPostalCode(d.getPostal());
+            rd.setTotalQty(d.getTotalQty());
+            rd.setTotalVolume(d.getTotalVol());
+            rd.setVolumeUnit(d.getVolUnit());
+            rd.setTotalWeight(d.getTotalWgt());
+            rd.setWeightUnit(d.getWgtUnit());
+            rd.setAmount(d.getAmount());
+            rd.setCurrency(d.getCurrencyUnit());
+            rd.setLatitude(d.getLat());
+            rd.setLongitude(d.getLng());
+            return rd;
+        }).toList();
+    }
+
 }

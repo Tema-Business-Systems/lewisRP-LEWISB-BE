@@ -56,4 +56,9 @@ public class ReportsController {
     public List<OrderCalendarDTO> getAllOrders() {
         return reportsService.getAllOrders();
     }
+
+    @GetMapping("/getDailyRouteBySiteandDate")
+    public DailyRouteDashboardResponse getrouteBySiteAndDate(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        return reportsService.getDailyRouteDashboard(site, date);
+    }
 }
