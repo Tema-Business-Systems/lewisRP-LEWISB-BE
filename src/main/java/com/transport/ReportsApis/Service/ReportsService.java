@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class ReportsService{
     private final DriverActivitySummaryRepository summaryRepo;
     private final DriverActivityTimelineRepository timelineRepo;
     private final CustomerServiceRepository custRepo;
+    private final DailyServiceVisitRepository dailyServicerepo;
 
     public List<TripHeader> getAllTrips() {
         return tripHeaderRepository.findAll();
@@ -360,6 +362,76 @@ public class ReportsService{
                     return dto;
                 }).collect(Collectors.toList());
         response.setCustomerServiceDetails(details);
+        return response;
+    }
+
+    public DailyServiceVisitResponseDTO getDailyServiceVisit(List<String> site, Date date) {
+        List<DailyServiceVisit> data = dailyServicerepo.findAll()
+                .stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // FILTER BY SITE
+        if (site != null && !site.isEmpty()) {
+            data = data.stream()
+                    .filter(d -> d.getSite() != null && site.contains(d.getSite()))
+                    .collect(Collectors.toList());
+        }
+
+        // FILTER BY DATE
+        if (date != null) {
+            LocalDate filterDate = date.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
+            data = data.stream()
+                    .filter(d -> d.getVisitDate() != null &&
+                            d.getVisitDate().toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                                    .equals(filterDate))
+                    .collect(Collectors.toList());
+        }
+
+        DailyServiceVisitResponseDTO response = new DailyServiceVisitResponseDTO();
+
+        // Filters
+        VisitFiltersDTO filters = new VisitFiltersDTO();
+        filters.setDate(date != null
+                ? date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString()
+                : null);
+
+        filters.setSite(site != null ? String.join(",", site) : "ALL");
+
+        response.setFilters(filters);
+
+        // Summary
+        int totalVisits = data.size();
+        String fieldStatus = totalVisits > 0 ? "Field Active" : "No Activity";
+        response.setSummary(new VisitSummaryDTO(totalVisits, fieldStatus));
+
+        // Details
+        List<ServiceVisitLogDTO> details = data.stream().map(d -> {
+
+            ServiceVisitLogDTO dto = new ServiceVisitLogDTO();
+            dto.setStore(d.getStore());
+            dto.setVisitType(d.getVisitType());
+            dto.setStart(d.getStartTime());
+            dto.setEnd(d.getEndTime());
+            dto.setActivity(d.getActivity());
+            dto.setStatus(d.getStatus());
+            dto.setDate(d.getVisitDate() != null
+                    ? d.getVisitDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                    .toString()
+                    : null);
+            dto.setSite(d.getSite());
+
+            return dto;
+
+        }).collect(Collectors.toList());
+        response.setServiceVisitLog(details);
         return response;
     }
 }

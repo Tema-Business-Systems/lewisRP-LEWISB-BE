@@ -71,4 +71,9 @@ public class ReportsController {
     public CustomerServiceResponseDTO getCustomerService() {
         return reportsService.getCustomerServiceData();
     }
+
+    @GetMapping("/dailyReportService")
+    public DailyServiceVisitResponseDTO getDailyServiceVisit(@RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        return reportsService.getDailyServiceVisit(site, date);
+    }
 }
