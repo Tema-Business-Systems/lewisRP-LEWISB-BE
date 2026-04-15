@@ -28,13 +28,8 @@ public class ReportsController {
     }
 
     @GetMapping("/getBySiteandDate")
-    public List<TripHeader> getBySiteAndDate(
-            AccessTokenVO accessTokenVO,
-            @RequestParam(name = "site", required = false) List<String> site,
-            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
-            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
-            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
-        return reportsService.getTripsBySiteAndDate(site, date, dateFrom, dateTo);
+    public List<TripHeader> getBySiteAndDate(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        return reportsService.getTripsBySiteAndDate(site, date);
     }
 
     @GetMapping("/kpiReports")

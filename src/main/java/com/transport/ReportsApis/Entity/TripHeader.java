@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "XTMSTRIPH")
+@Table(name = "XTMSTRIPH", schema = "LEWISB")
 public class TripHeader {
     @Id
     @Column(name = "tripid")

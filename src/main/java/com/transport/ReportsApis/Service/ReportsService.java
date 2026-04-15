@@ -46,12 +46,11 @@ public class ReportsService{
         return tripHeaderRepository.findById(tripid).orElseThrow(() -> new RuntimeException("Trip not found : " + tripid));
     }
 
-    public List<TripHeader> getTripsBySiteAndDate(List<String> site, Date date, Date dateFrom, Date dateTo) {
+    public List<TripHeader> getTripsBySiteAndDate(List<String> site, Date date) {
         if(site == null || site.isEmpty()){
             return List.of();
         }
-        Date[] range = resolveDateRange(date, dateFrom, dateTo);
-        return tripHeaderRepository.findBySiteAndDateRange(site, range[0], range[1]);
+        return tripHeaderRepository.findBySiteInAndDate(site, date);
     }
 
     public KpiTransportationResponse getKpiTransportation() {

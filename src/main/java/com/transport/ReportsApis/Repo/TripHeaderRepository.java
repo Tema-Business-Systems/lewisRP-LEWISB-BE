@@ -11,15 +11,5 @@ import java.util.List;
 
 @Repository
 public interface TripHeaderRepository extends JpaRepository<TripHeader, String> {
-    @Query(value = """
-            SELECT *
-            FROM XTMSTRIPH
-            WHERE (:site IS NULL OR SITE IN (:site))
-            AND (:dateFrom IS NULL OR DATE >= :dateFrom)
-            AND (:dateTo IS NULL OR DATE < DATEADD(day, 1, :dateTo))
-            """, nativeQuery = true)
-    List<TripHeader> findBySiteAndDateRange(
-            @Param("site") List<String> site,
-            @Param("dateFrom") Date dateFrom,
-            @Param("dateTo") Date dateTo);
+    List<TripHeader> findBySiteInAndDate(List<String> site, Date date);
 }
