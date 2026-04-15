@@ -28,8 +28,13 @@ public class ReportsController {
     }
 
     @GetMapping("/getBySiteandDate")
-    public List<TripHeader> getBySiteAndDate(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return reportsService.getTripsBySiteAndDate(site, date);
+    public List<TripHeader> getBySiteAndDate(
+            AccessTokenVO accessTokenVO,
+            @RequestParam(name = "site", required = false) List<String> site,
+            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return reportsService.getTripsBySiteAndDate(site, date, dateFrom, dateTo);
     }
 
     @GetMapping("/kpiReports")
@@ -53,18 +58,31 @@ public class ReportsController {
     }
 
     @GetMapping("/orderDetail")
-    public List<OrderCalendarDTO> getAllOrders() {
-        return reportsService.getAllOrders();
+    public List<OrderCalendarDTO> getAllOrders(
+            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return reportsService.getAllOrders(date, dateFrom, dateTo);
     }
 
     @GetMapping("/getDailyRouteBySiteandDate")
-    public DailyRouteDashboardResponse getrouteBySiteAndDate(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return reportsService.getDailyRouteDashboard(site, date);
+    public DailyRouteDashboardResponse getrouteBySiteAndDate(
+            AccessTokenVO accessTokenVO,
+            @RequestParam(name = "site", required = false) List<String> site,
+            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return reportsService.getDailyRouteDashboard(site, date, dateFrom, dateTo);
     }
 
     @GetMapping("/driverActivity")
-    public DriverActivityResponseDTO getDriverActivity(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return reportsService.getDriverActivity(site, date);
+    public DriverActivityResponseDTO getDriverActivity(
+            AccessTokenVO accessTokenVO,
+            @RequestParam(name = "site", required = false) List<String> site,
+            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return reportsService.getDriverActivity(site, date, dateFrom, dateTo);
     }
 
     @GetMapping("/customerService")
@@ -73,7 +91,11 @@ public class ReportsController {
     }
 
     @GetMapping("/dailyReportService")
-    public DailyServiceVisitResponseDTO getDailyServiceVisit(@RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return reportsService.getDailyServiceVisit(site, date);
+    public DailyServiceVisitResponseDTO getDailyServiceVisit(
+            @RequestParam(name = "site", required = false) List<String> site,
+            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return reportsService.getDailyServiceVisit(site, date, dateFrom, dateTo);
     }
 }

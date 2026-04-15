@@ -16,7 +16,10 @@ public interface DriverActivitySummaryRepository
     @Query(value = """
             SELECT *
             FROM LEWISB.VW_DRIVER_ACTIVITY_SUMMARY
-            WHERE (:date IS NULL OR CAST(ACTIVITY_DATE AS DATE) = :date)
+            WHERE (:dateFrom IS NULL OR CAST(ACTIVITY_DATE AS DATE) >= :dateFrom)
+            AND (:dateTo IS NULL OR CAST(ACTIVITY_DATE AS DATE) <= :dateTo)
             """, nativeQuery = true)
-    List<DriverActivitySummary> getByDate(@Param("date") Date date);
+    List<DriverActivitySummary> getByDateRange(
+            @Param("dateFrom") Date dateFrom,
+            @Param("dateTo") Date dateTo);
 }

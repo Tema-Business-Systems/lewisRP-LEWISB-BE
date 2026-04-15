@@ -15,12 +15,12 @@ public interface DailyRouteSummaryRepository extends JpaRepository<DailyRouteSum
     @Query(value = """
         SELECT *
         FROM LEWISB.VW_DAILY_ROUTE_SUMMARY
-        WHERE SITE IN (:sites)
-        AND (:date IS NULL 
-             OR (ROUTEDATE >= :date 
-             AND ROUTEDATE < DATEADD(day, 1, :date)))
+        WHERE (:sites IS NULL OR SITE IN (:sites))
+        AND (:dateFrom IS NULL OR ROUTEDATE >= :dateFrom)
+        AND (:dateTo IS NULL OR ROUTEDATE < DATEADD(day, 1, :dateTo))
     """, nativeQuery = true)
-    List<DailyRouteSummary> findBySiteAndDate(
+    List<DailyRouteSummary> findBySiteAndDateRange(
             @Param("sites") List<String> sites,
-            @Param("date") Date date);
+            @Param("dateFrom") Date dateFrom,
+            @Param("dateTo") Date dateTo);
 }

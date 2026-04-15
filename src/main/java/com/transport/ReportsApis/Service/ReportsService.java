@@ -46,11 +46,12 @@ public class ReportsService{
         return tripHeaderRepository.findById(tripid).orElseThrow(() -> new RuntimeException("Trip not found : " + tripid));
     }
 
-    public List<TripHeader> getTripsBySiteAndDate(List<String> site, Date date) {
+    public List<TripHeader> getTripsBySiteAndDate(List<String> site, Date date, Date dateFrom, Date dateTo) {
         if(site == null || site.isEmpty()){
             return List.of();
         }
-        return tripHeaderRepository.findBySiteInAndDate(site, date);
+        Date[] range = resolveDateRange(date, dateFrom, dateTo);
+        return tripHeaderRepository.findBySiteAndDateRange(site, range[0], range[1]);
     }
 
     public KpiTransportationResponse getKpiTransportation() {
@@ -177,8 +178,17 @@ public class ReportsService{
         }).toList();
     }
 
-    public List<OrderCalendarDTO> getAllOrders() {
-        return orderRepo.findAll()
+    public List<OrderCalendarDTO> getAllOrders(Date date, Date dateFrom, Date dateTo) {
+        List<OrderCalendar> orders;
+        if (date == null && dateFrom == null && dateTo == null) {
+            orders = orderRepo.findAll();
+        } else {
+            Date[] range = resolveDateRange(date, dateFrom, dateTo);
+            LocalDate from = range[0].toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate to = range[1].toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            orders = orderRepo.findByOrderDateBetween(from, to);
+        }
+        return orders
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -206,13 +216,14 @@ public class ReportsService{
         return dto;
     }
 
-    public DailyRouteDashboardResponse getDailyRouteDashboard(List<String> sites, Date date) {
+    public DailyRouteDashboardResponse getDailyRouteDashboard(List<String> sites, Date date, Date dateFrom, Date dateTo) {
         if (sites != null && sites.isEmpty()) {
             sites = null;
         }
-        List<DailyRouteSummary> data = dailyRouteRepo.findBySiteAndDate(sites, date);
+        Date[] range = resolveDateRange(date, dateFrom, dateTo);
+        List<DailyRouteSummary> data = dailyRouteRepo.findBySiteAndDateRange(sites, range[0], range[1]);
         DailyRouteDashboardResponse response = new DailyRouteDashboardResponse();
-        response.setDate(date == null ? null : date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        response.setDate(range[0] == null ? null : range[0].toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         response.setSite(sites == null ? "ALL" : String.join(",", sites));
         response.setSummary(buildSummary(data));
         response.setDriverPerformance(buildDriverPerformance(data));
@@ -292,12 +303,14 @@ public class ReportsService{
     }
 
 
-    public DriverActivityResponseDTO getDriverActivity(List<String> site, Date date) {
-        List<DriverActivitySummary> summaryList = summaryRepo.getByDate(date);
-        List<DriverActivityTimeline> timelineList = timelineRepo.getBySiteAndDate(site, date);
+    public DriverActivityResponseDTO getDriverActivity(List<String> site, Date date, Date dateFrom, Date dateTo) {
+        Date[] range = resolveDateRange(date, dateFrom, dateTo);
+        List<String> normalizedSite = (site == null || site.isEmpty()) ? null : site;
+        List<DriverActivitySummary> summaryList = summaryRepo.getByDateRange(range[0], range[1]);
+        List<DriverActivityTimeline> timelineList = timelineRepo.getBySiteAndDateRange(normalizedSite, range[0], range[1]);
         DriverActivityResponseDTO response = new DriverActivityResponseDTO();
-        response.setDate(date != null ? new SimpleDateFormat("yyyy-MM-dd").format(date) : null);
-        response.setSite(site != null ? site.get(0) : null);
+        response.setDate(range[0] != null ? new SimpleDateFormat("yyyy-MM-dd").format(range[0]) : null);
+        response.setSite(normalizedSite != null ? normalizedSite.get(0) : null);
         // SUMMARY
         if (summaryList != null && !summaryList.isEmpty() && summaryList.get(0) != null) {
             DriverActivitySummary s = summaryList.get(0);
@@ -365,43 +378,22 @@ public class ReportsService{
         return response;
     }
 
-    public DailyServiceVisitResponseDTO getDailyServiceVisit(List<String> site, Date date) {
-        List<DailyServiceVisit> data = dailyServicerepo.findAll()
-                .stream()
+    public DailyServiceVisitResponseDTO getDailyServiceVisit(List<String> site, Date date, Date dateFrom, Date dateTo) {
+        Date[] range = resolveDateRange(date, dateFrom, dateTo);
+        List<String> normalizedSite = (site == null || site.isEmpty()) ? null : site;
+        List<DailyServiceVisit> data = dailyServicerepo.findBySiteAndVisitDateRange(normalizedSite, range[0], range[1]).stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-
-        // FILTER BY SITE
-        if (site != null && !site.isEmpty()) {
-            data = data.stream()
-                    .filter(d -> d.getSite() != null && site.contains(d.getSite()))
-                    .collect(Collectors.toList());
-        }
-
-        // FILTER BY DATE
-        if (date != null) {
-            LocalDate filterDate = date.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-
-            data = data.stream()
-                    .filter(d -> d.getVisitDate() != null &&
-                            d.getVisitDate().toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDate()
-                                    .equals(filterDate))
-                    .collect(Collectors.toList());
-        }
 
         DailyServiceVisitResponseDTO response = new DailyServiceVisitResponseDTO();
 
         // Filters
         VisitFiltersDTO filters = new VisitFiltersDTO();
-        filters.setDate(date != null
-                ? date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString()
+        filters.setDate(range[0] != null
+                ? range[0].toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString()
                 : null);
 
-        filters.setSite(site != null ? String.join(",", site) : "ALL");
+        filters.setSite(normalizedSite != null ? String.join(",", normalizedSite) : "ALL");
 
         response.setFilters(filters);
 
@@ -433,5 +425,21 @@ public class ReportsService{
         }).collect(Collectors.toList());
         response.setServiceVisitLog(details);
         return response;
+    }
+
+    private Date[] resolveDateRange(Date date, Date dateFrom, Date dateTo) {
+        Date effectiveFrom = dateFrom;
+        Date effectiveTo = dateTo;
+        if (effectiveFrom == null && effectiveTo == null && date != null) {
+            effectiveFrom = date;
+            effectiveTo = date;
+        }
+        if (effectiveFrom == null) {
+            effectiveFrom = effectiveTo;
+        }
+        if (effectiveTo == null) {
+            effectiveTo = effectiveFrom;
+        }
+        return new Date[]{effectiveFrom, effectiveTo};
     }
 }

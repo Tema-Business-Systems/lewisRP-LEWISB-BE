@@ -2,13 +2,24 @@ package com.transport.ReportsApis.Repo;
 
 import com.transport.ReportsApis.Entity.TripHeader;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface TripHeaderRepository extends JpaRepository<TripHeader, String> {
-    List<TripHeader> findBySiteInAndDate(List<String> site, Date date);
+    @Query(value = """
+            SELECT *
+            FROM XTMSTRIPH
+            WHERE (:site IS NULL OR SITE IN (:site))
+            AND (:dateFrom IS NULL OR DATE >= :dateFrom)
+            AND (:dateTo IS NULL OR DATE < DATEADD(day, 1, :dateTo))
+            """, nativeQuery = true)
+    List<TripHeader> findBySiteAndDateRange(
+            @Param("site") List<String> site,
+            @Param("dateFrom") Date dateFrom,
+            @Param("dateTo") Date dateTo);
 }

@@ -17,10 +17,12 @@ public interface DriverActivityTimelineRepository
             SELECT *
             FROM LEWISB.VW_DRIVER_ACTIVITY_TIMELINE
             WHERE (:site IS NULL OR SITE IN (:site))
-            AND (:date IS NULL OR CAST(ACTIVITY_DATE AS DATE) = :date)
+            AND (:dateFrom IS NULL OR CAST(ACTIVITY_DATE AS DATE) >= :dateFrom)
+            AND (:dateTo IS NULL OR CAST(ACTIVITY_DATE AS DATE) <= :dateTo)
             ORDER BY DRIVER, START_TIME
             """, nativeQuery = true)
-    List<DriverActivityTimeline> getBySiteAndDate(
+    List<DriverActivityTimeline> getBySiteAndDateRange(
             @Param("site") List<String> site,
-            @Param("date") Date date);
+            @Param("dateFrom") Date dateFrom,
+            @Param("dateTo") Date dateTo);
 }
