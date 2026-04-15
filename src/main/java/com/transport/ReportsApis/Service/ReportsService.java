@@ -46,11 +46,22 @@ public class ReportsService{
         return tripHeaderRepository.findById(tripid).orElseThrow(() -> new RuntimeException("Trip not found : " + tripid));
     }
 
-    public List<TripHeader> getTripsBySiteAndDate(List<String> site, Date date) {
-        if(site == null || site.isEmpty()){
+    public List<TripHeader> getTripsBySiteAndDate(List<String> site, Date startDate, Date endDate) {
+        if (site == null || site.isEmpty()) {
             return List.of();
         }
-        return tripHeaderRepository.findBySiteInAndDate(site, date);
+
+        if (endDate != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(endDate);
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            cal.set(Calendar.MILLISECOND, 999);
+            endDate = cal.getTime();
+        }
+
+        return tripHeaderRepository.findBySiteInAndDateBetween(site, startDate, endDate);
     }
 
     public KpiTransportationResponse getKpiTransportation() {
