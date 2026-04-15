@@ -230,10 +230,10 @@ public class ReportsService{
         if (sites != null && sites.isEmpty()) {
             sites = null;
         }
-        Date[] range = resolveDateRange(date, dateFrom, dateTo);
-        List<DailyRouteSummary> data = dailyRouteRepo.findBySiteAndDateRange(sites, range[0], range[1]);
+        List<DailyRouteSummary> data = dailyRouteRepo.findBySiteAndDateRange(sites, dateFrom, dateTo);
         DailyRouteDashboardResponse response = new DailyRouteDashboardResponse();
-        response.setDate(range[0] == null ? null : range[0].toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        response.setDate(dateFrom == null ? null :
+                dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         response.setSite(sites == null ? "ALL" : String.join(",", sites));
         response.setSummary(buildSummary(data));
         response.setDriverPerformance(buildDriverPerformance(data));
@@ -241,7 +241,6 @@ public class ReportsService{
         response.setRouteDetails(buildRouteDetails(data));
         return response;
     }
-
     private Summary buildSummary(List<DailyRouteSummary> data) {
         Summary summary = new Summary();
         CustomersServiced cs = new CustomersServiced();

@@ -15,7 +15,7 @@ public interface DailyRouteSummaryRepository extends JpaRepository<DailyRouteSum
     @Query(value = """
         SELECT *
         FROM LEWISB.VW_DAILY_ROUTE_SUMMARY
-        WHERE (:sites IS NULL OR SITE IN (:sites))
+        WHERE SITE IN (:sites)
         AND (:dateFrom IS NULL OR ROUTEDATE >= :dateFrom)
         AND (:dateTo IS NULL OR ROUTEDATE < DATEADD(day, 1, :dateTo))
     """, nativeQuery = true)

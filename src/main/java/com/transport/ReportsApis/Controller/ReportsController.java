@@ -71,10 +71,11 @@ public class ReportsController {
     public DailyRouteDashboardResponse getrouteBySiteAndDate(
             AccessTokenVO accessTokenVO,
             @RequestParam(name = "site", required = false) List<String> site,
-            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
-            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
-            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
-        return reportsService.getDailyRouteDashboard(site, date, dateFrom, dateTo);
+            @RequestParam(name = "dateFrom", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+            @RequestParam(name = "dateTo", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return reportsService.getDailyRouteDashboard(site, null, dateFrom, dateTo);
     }
 
     @GetMapping("/driverActivity")
