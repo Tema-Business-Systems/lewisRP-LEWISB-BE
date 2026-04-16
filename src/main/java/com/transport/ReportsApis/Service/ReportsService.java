@@ -315,6 +315,10 @@ public class ReportsService{
         if (sites != null && sites.isEmpty()) {
             sites = null;
         }
+        if (date != null) {
+            dateFrom = date;
+            dateTo = date;
+        }
         if (dateFrom != null && dateTo == null) {
             dateTo = dateFrom;
         }
