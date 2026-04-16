@@ -31,12 +31,10 @@ public class ReportsController {
     public List<TripHeader> getBySiteAndDate(
             AccessTokenVO accessTokenVO,
             @RequestParam(name = "site", required = false) List<String> site,
-            @RequestParam(name = "dateFrom", required = false)
-            @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam(name = "dateTo", required = false)
-            @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-
-        return reportsService.getTripsBySiteAndDate(site, startDate, endDate);
+            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        return reportsService.getTripsBySiteAndDate(site, date, startDate, endDate);
     }
 
     @GetMapping("/kpiReports")

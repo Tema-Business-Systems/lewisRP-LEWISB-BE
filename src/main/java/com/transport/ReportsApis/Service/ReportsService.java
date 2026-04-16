@@ -46,9 +46,13 @@ public class ReportsService{
         return tripHeaderRepository.findById(tripid).orElseThrow(() -> new RuntimeException("Trip not found : " + tripid));
     }
 
-    public List<TripHeader> getTripsBySiteAndDate(List<String> site, Date startDate, Date endDate) {
+    public List<TripHeader> getTripsBySiteAndDate(List<String> site,Date date, Date startDate, Date endDate) {
         if (site == null || site.isEmpty()) {
             return List.of();
+        }
+        if (date != null) {
+            startDate = date;
+            endDate = date;
         }
         if (startDate != null && endDate == null) {
             endDate = startDate;
