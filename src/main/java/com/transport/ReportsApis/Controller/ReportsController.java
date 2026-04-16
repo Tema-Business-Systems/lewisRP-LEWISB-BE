@@ -44,14 +44,22 @@ public class ReportsController {
         return reportsService.getKpiTransportation();
     }
 
+//    @GetMapping("/routeList")
+//    public RouteListResponse getRouteList(@RequestParam(name = "site") List<String> site, @RequestParam(name = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from, @RequestParam(name = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to) {
+//        return reportsService.getRouteList(site, from, to);
+//    }
     @GetMapping("/routeList")
-    public RouteListResponse getRouteList(@RequestParam(name = "site") List<String> site, @RequestParam(name = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from, @RequestParam(name = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to) {
-        return reportsService.getRouteList(site, from, to);
+    public RouteListResponse getRouteList() {
+        return reportsService.getRouteList();
     }
 
+//    @GetMapping("/podTracking")
+//    public List<PodTrackingDTO> getPodTracking(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom, @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+//        return reportsService.getPodTracking(site, dateFrom, dateTo);
+//    }
     @GetMapping("/podTracking")
-    public List<PodTrackingDTO> getPodTracking(AccessTokenVO accessTokenVO, @RequestParam(name = "site", required = false) List<String> site, @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom, @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
-        return reportsService.getPodTracking(site, dateFrom, dateTo);
+    public List<PodTrackingDTO> getPodTracking() {
+        return reportsService.getPodTracking();
     }
 
     @GetMapping("/dashboard")
@@ -59,12 +67,16 @@ public class ReportsController {
         return reportsService.getDashboardReport();
     }
 
+//    @GetMapping("/orderDetail")
+//    public List<OrderCalendarDTO> getAllOrders(
+//            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+//            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+//            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+//        return reportsService.getAllOrders(date, dateFrom, dateTo);
+//    }
     @GetMapping("/orderDetail")
-    public List<OrderCalendarDTO> getAllOrders(
-            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
-            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
-            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
-        return reportsService.getAllOrders(date, dateFrom, dateTo);
+    public List<OrderCalendarDTO> getAllOrders() {
+        return reportsService.getAllOrders();
     }
 
     @GetMapping("/getDailyRouteBySiteandDate")

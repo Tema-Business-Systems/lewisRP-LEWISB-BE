@@ -146,20 +146,93 @@ public class ReportsService{
         return response;
     }
 
-    public List<PodTrackingDTO> getPodTracking(List<String> site,  Date dateFrom, Date dateTo) {
-        List<PodTracking> list = repository.findBySiteInAndDateBetween(site, dateFrom, dateTo);
+//    public List<PodTrackingDTO> getPodTracking(List<String> site,  Date dateFrom, Date dateTo) {
+//        List<PodTracking> list = repository.findBySiteInAndDateBetween(site, dateFrom, dateTo);
+//        return list.stream().map(p -> {
+//            PodTrackingDTO dto = new PodTrackingDTO();
+//            BeanUtils.copyProperties(p, dto);
+//            dto.setLineItems(lineRepo.findByDocument(p.getDocument()));
+//            dto.setPodProducts(productRepo.findByDeliveryNum(p.getDocument()));
+//            dto.setPodImages(imageRepo.findByDocument(p.getDocument())
+//                .stream()
+//                .filter(Objects::nonNull)
+//                .toList()
+//            );
+//            return dto;
+//        }).toList();
+//    }
+
+    public List<PodTrackingDTO> getPodTracking() {
+        List<PodTracking> list = repository.findAll();
         return list.stream().map(p -> {
             PodTrackingDTO dto = new PodTrackingDTO();
             BeanUtils.copyProperties(p, dto);
             dto.setLineItems(lineRepo.findByDocument(p.getDocument()));
             dto.setPodProducts(productRepo.findByDeliveryNum(p.getDocument()));
-            dto.setPodImages(imageRepo.findByDocument(p.getDocument())
-                .stream()
-                .filter(Objects::nonNull)
-                .toList()
+            dto.setPodImages(
+                    imageRepo.findByDocument(p.getDocument())
+                            .stream()
+                            .filter(Objects::nonNull)
+                            .toList()
             );
             return dto;
         }).toList();
+    }
+
+    public RouteListResponse getRouteList() {
+        List<RouteListHeader> headers = headerRepo.findAll();
+        List<String> tripIds = headers.stream()
+                .map(RouteListHeader::getId)
+                .collect(Collectors.toList());
+        List<RouteListDocs> docs = docsRepo.findByTripidIn(tripIds);
+        Map<String, List<RouteListDocs>> docsMap =
+                docs.stream().collect(Collectors.groupingBy(RouteListDocs::getTripid));
+        RouteListResponse response = new RouteListResponse();
+        response.setRecords(headers.stream().map(h -> {
+            RouteListResponse.Record r = new RouteListResponse.Record();
+            r.setId(h.getId());
+            r.setRouteCode(h.getRouteCode());
+            r.setVehicle(h.getVehicle());
+            r.setTrip(h.getTrip());
+            r.setDriverId(h.getDriverId());
+            r.setCarrier("INTERNAL");
+            r.setSite(h.getSite());
+            r.setSchedDepDate(h.getSchedDepDate());
+            r.setSchedDepTime(h.getSchedDepTime());
+            r.setSchedRetDate(h.getSchedRetDate());
+            r.setSchedRetTime(h.getSchedRetTime());
+            r.setCorrDepDate(h.getCorrDepDate());
+            r.setCorrDepTime(h.getCorrDepTime());
+            r.setCorrRetDate(h.getCorrRetDate());
+            r.setCorrRetTime(h.getCorrRetTime());
+            r.setActDepDate(h.getActDepDate());
+            r.setActDepTime(h.getActDepTime());
+            r.setActRetDate(h.getActRetDate());
+            r.setActRetTime(h.getActRetTime());
+            r.setDistanceKm(h.getDistanceKm());
+            r.setTimeH(h.getTimeH());
+
+            List<RouteListResponse.Document> documents =
+                    docsMap.getOrDefault(h.getId(), Collections.emptyList())
+                            .stream()
+                            .map(d -> {
+                                RouteListResponse.Document doc = new RouteListResponse.Document();
+                                doc.setSequence(d.getSequence());
+                                doc.setDocumentNo(d.getDocumentNo());
+                                doc.setDocType(d.getDocType());
+                                doc.setArvTime(d.getArvTime());
+                                doc.setDepTime(d.getDepTime());
+                                doc.setStatus(d.getStatus());
+                                return doc;
+                            }).collect(Collectors.toList());
+
+            r.setDocuments(documents);
+
+            return r;
+
+        }).collect(Collectors.toList()));
+
+        return response;
     }
 
     public List<DashboardReportResponse> getDashboardReport() {
@@ -188,22 +261,28 @@ public class ReportsService{
         }).toList();
     }
 
-    public List<OrderCalendarDTO> getAllOrders(Date date, Date dateFrom, Date dateTo) {
-        List<OrderCalendar> orders;
-        if (date == null && dateFrom == null && dateTo == null) {
-            orders = orderRepo.findAll();
-        } else {
-            Date[] range = resolveDateRange(date, dateFrom, dateTo);
-            LocalDate from = range[0].toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate to = range[1].toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            orders = orderRepo.findByOrderDateBetween(from, to);
-        }
-        return orders
-                .stream()
+//    public List<OrderCalendarDTO> getAllOrders(Date date, Date dateFrom, Date dateTo) {
+//        List<OrderCalendar> orders;
+//        if (date == null && dateFrom == null && dateTo == null) {
+//            orders = orderRepo.findAll();
+//        } else {
+//            Date[] range = resolveDateRange(date, dateFrom, dateTo);
+//            LocalDate from = range[0].toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//            LocalDate to = range[1].toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//            orders = orderRepo.findByOrderDateBetween(from, to);
+//        }
+//        return orders
+//                .stream()
+//                .map(this::convertToDTO)
+//                .collect(Collectors.toList());
+//    }
+
+    public List<OrderCalendarDTO> getAllOrders() {
+        List<OrderCalendar> orders = orderRepo.findAll();
+        return orders.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
     private OrderCalendarDTO convertToDTO(OrderCalendar entity) {
         OrderCalendarDTO dto = new OrderCalendarDTO();
         dto.setId(entity.getId());
