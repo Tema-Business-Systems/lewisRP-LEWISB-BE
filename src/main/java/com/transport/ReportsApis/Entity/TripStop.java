@@ -8,11 +8,12 @@ import java.util.Date;
 @Entity
 @Table(name = "XTMSTRIPD", schema = "LEWISB")
 public class TripStop {
-    @Id
-    @Column(name = "line_no")
-    private Integer lineNo;
-    @Column(name = "tripid")
-    private String tripid;
+    @EmbeddedId
+    private TripStopId id;
+//    @Column(name = "line_no")
+//    private Integer lineNo;
+//    @Column(name = "tripid")
+//    private String tripid;
     @Column(name = "document")
     private String document;
     @Column(name = "sequence")

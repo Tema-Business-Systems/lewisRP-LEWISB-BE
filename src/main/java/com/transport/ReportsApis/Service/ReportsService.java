@@ -50,7 +50,13 @@ public class ReportsService{
         if (site == null || site.isEmpty()) {
             return List.of();
         }
+        if (startDate != null && endDate == null) {
+            endDate = startDate;
+        }
 
+        if (startDate == null && endDate != null) {
+            startDate = endDate;
+        }
         if (endDate != null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(endDate);
@@ -308,6 +314,12 @@ public class ReportsService{
     public DailyRouteDashboardResponse getDailyRouteDashboard(List<String> sites, Date date, Date dateFrom, Date dateTo) {
         if (sites != null && sites.isEmpty()) {
             sites = null;
+        }
+        if (dateFrom != null && dateTo == null) {
+            dateTo = dateFrom;
+        }
+        if (dateFrom == null && dateTo != null) {
+            dateFrom = dateTo;
         }
         List<DailyRouteSummary> data = dailyRouteRepo.findBySiteAndDateRange(sites, dateFrom, dateTo);
         DailyRouteDashboardResponse response = new DailyRouteDashboardResponse();
