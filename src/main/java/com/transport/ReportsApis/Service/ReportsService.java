@@ -70,8 +70,8 @@ public class ReportsService{
             cal.set(Calendar.MILLISECOND, 999);
             endDate = cal.getTime();
         }
-
-        return tripHeaderRepository.findBySiteInAndDateBetween(site, startDate, endDate);
+        List<TripHeader> trips = tripHeaderRepository.findBySiteInAndDateBetween(site, startDate, endDate);
+        return trips.stream().filter(trip -> trip.getStops() != null && !trip.getStops().isEmpty()).toList();
     }
 
     public KpiTransportationResponse getKpiTransportation() {
