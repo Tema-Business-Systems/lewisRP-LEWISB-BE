@@ -30,6 +30,8 @@ public class TripHeader {
     private String vehicle;
     @Column(name = "DRIVER")
     private String driver;
+    @Column(name = "DRIVERNAME")
+    private String driverName;
     @Column(name = "LVS")
     private String lvs;
     @Column(name = "VALIDFLG")
