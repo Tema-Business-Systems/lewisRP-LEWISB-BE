@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -647,11 +649,13 @@ public class ReportsService{
             dto.setEnd(d.getEndTime());
             dto.setActivity(d.getActivity());
             dto.setStatus(d.getStatus());
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+
             dto.setDate(d.getVisitDate() != null
                     ? d.getVisitDate().toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                    .toString()
+                    .atZone(ZoneOffset.UTC)
+                    .format(formatter)
                     : null);
             dto.setSite(d.getSite());
 
