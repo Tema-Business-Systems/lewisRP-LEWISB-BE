@@ -245,28 +245,107 @@ public class ReportsService{
         return response;
     }
 
-    public List<DashboardReportResponse> getDashboardReport() {
+//    public List<DashboardReportResponse> getDashboardReport() {
+//        List<DashboardReport> reports = dashRepository.findAll();
+//        return reports.stream().map(report -> {
+//            DashboardReportResponse response = new DashboardReportResponse();
+//            try {
+//                response.setMetrics(
+//                        objectMapper.readValue(report.getMetrics(), new TypeReference<List<Map<String, Object>>>() {}
+//                        )
+//                );
+//                response.setActiveRoutes(
+//                        objectMapper.readValue(report.getActiveRoutes(), new TypeReference<List<Map<String, Object>>>() {}
+//                        )
+//                );
+//
+//                response.setVehicleLocations(
+//                        objectMapper.readValue(report.getVehicleLocations(), new TypeReference<List<Map<String, Object>>>() {}
+//                        )
+//                );
+//            } catch (Exception e) {
+//                throw new RuntimeException("Error parsing dashboard JSON", e);
+//            }
+//            return response;
+//
+//        }).toList();
+//    }
+
+    public List<DashboardReportResponse> getDashboardReport(
+            List<String> site,
+            Date date,
+            Date dateFrom,
+            Date dateTo) {
+
         List<DashboardReport> reports = dashRepository.findAll();
+
         return reports.stream().map(report -> {
             DashboardReportResponse response = new DashboardReportResponse();
             try {
-                response.setMetrics(
-                        objectMapper.readValue(report.getMetrics(), new TypeReference<List<Map<String, Object>>>() {}
-                        )
-                );
-                response.setActiveRoutes(
-                        objectMapper.readValue(report.getActiveRoutes(), new TypeReference<List<Map<String, Object>>>() {}
-                        )
-                );
 
-                response.setVehicleLocations(
-                        objectMapper.readValue(report.getVehicleLocations(), new TypeReference<List<Map<String, Object>>>() {}
-                        )
-                );
+                List<Map<String, Object>> metrics =
+                        objectMapper.readValue(report.getMetrics(),
+                                new TypeReference<List<Map<String, Object>>>() {});
+
+                List<Map<String, Object>> activeRoutes =
+                        objectMapper.readValue(report.getActiveRoutes(),
+                                new TypeReference<List<Map<String, Object>>>() {});
+
+                List<Map<String, Object>> vehicleLocations =
+                        objectMapper.readValue(report.getVehicleLocations(),
+                                new TypeReference<List<Map<String, Object>>>() {});
+
+                // 🔹 filter logic
+                response.setMetrics(filterBySiteAndDate(metrics, site, date, dateFrom, dateTo));
+                response.setActiveRoutes(filterBySiteAndDate(activeRoutes, site, date, dateFrom, dateTo));
+                response.setVehicleLocations(filterBySiteAndDate(vehicleLocations, site, date, dateFrom, dateTo));
+
             } catch (Exception e) {
                 throw new RuntimeException("Error parsing dashboard JSON", e);
             }
             return response;
+
+        }).toList();
+    }
+
+    private List<Map<String, Object>> filterBySiteAndDate(
+            List<Map<String, Object>> data,
+            List<String> sites,
+            Date date,
+            Date dateFrom,
+            Date dateTo) {
+
+        return data.stream().filter(item -> {
+
+            String itemSite = (String) item.get("site");
+            String reportDate = (String) item.get("report_date");
+
+            boolean siteMatch = true;
+            boolean dateMatch = true;
+
+            // site filter
+            if (sites != null && !sites.isEmpty()) {
+                siteMatch = sites.contains(itemSite);
+            }
+
+            // date filter
+            if (date != null) {
+                dateMatch = reportDate.equals(
+                        new java.text.SimpleDateFormat("yyyy-MM-dd").format(date)
+                );
+            }
+
+            // date range filter
+            if (dateFrom != null && dateTo != null) {
+                try {
+                    Date itemDate = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(reportDate);
+                    dateMatch = !itemDate.before(dateFrom) && !itemDate.after(dateTo);
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+
+            return siteMatch && dateMatch;
 
         }).toList();
     }

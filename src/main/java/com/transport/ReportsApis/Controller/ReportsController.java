@@ -60,9 +60,17 @@ public class ReportsController {
         return reportsService.getPodTracking();
     }
 
+//    @GetMapping("/dashboard")
+//    public List<DashboardReportResponse> getDashboardReport() {
+//        return reportsService.getDashboardReport();
+//    }
     @GetMapping("/dashboard")
-    public List<DashboardReportResponse> getDashboardReport() {
-        return reportsService.getDashboardReport();
+    public List<DashboardReportResponse> getDashboardReport(
+            @RequestParam(name = "site", required = false) List<String> site,
+            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return reportsService.getDashboardReport(site, date, dateFrom, dateTo);
     }
 
 //    @GetMapping("/orderDetail")
