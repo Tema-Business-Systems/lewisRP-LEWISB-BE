@@ -317,11 +317,8 @@ public class ReportsService{
     }
 
     private List<Map<String, Object>> aggregateMetrics(List<Map<String, Object>> metrics) {
-
         Map<String, Map<String, Object>> grouped = new LinkedHashMap<>();
-
         for (Map<String, Object> item : metrics) {
-
             String title = (String) item.get("title");
             Integer value = ((Number) item.get("value")).intValue();
 
@@ -334,9 +331,10 @@ public class ReportsService{
             }
         }
 
-        // ensure all 5 metrics always present
+        // ensure all metrics always present
         String[] requiredTitles = {
                 "Total Vehicles",
+                "Active Routes",
                 "Orders Pending",
                 "Orders Delivered",
                 "Drivers Available",
@@ -357,7 +355,8 @@ public class ReportsService{
         }
 
         return new ArrayList<>(grouped.values());
-    }    private List<Map<String, Object>> filterBySiteAndDate(
+    }
+    private List<Map<String, Object>> filterBySiteAndDate(
             List<Map<String, Object>> data,
             List<String> sites,
             Date date,
