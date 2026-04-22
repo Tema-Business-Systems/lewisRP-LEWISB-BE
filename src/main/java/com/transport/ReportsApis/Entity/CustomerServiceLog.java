@@ -21,6 +21,8 @@ public class CustomerServiceLog {
 
     @Column(name = "DRIVER")
     private String driver;
+    @Column(name = "DRIVERNAME")
+    private String driverName;
 
     @Column(name = "DELIVERY_STATUS")
     private String deliveryStatus;

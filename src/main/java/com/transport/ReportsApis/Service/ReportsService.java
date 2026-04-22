@@ -604,6 +604,7 @@ public class ReportsService{
                     dto.setCustomer(d.getCustomer());
                     dto.setAccountType(d.getAccountType());
                     dto.setDriver(d.getDriver());
+                    dto.setDriverName(d.getDriverName());
                     dto.setDelivery(d.getDeliveryStatus());
                     dto.setOrderChange(d.getOrderChange());
                     dto.setAdvanceOrder(d.getAdvOrder());

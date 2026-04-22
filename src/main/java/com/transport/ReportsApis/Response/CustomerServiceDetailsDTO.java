@@ -8,6 +8,7 @@ public class CustomerServiceDetailsDTO {
     private String customer;
     private String accountType;
     private String driver;
+    private String driverName;
     private String delivery;
     private String orderChange;
     private String advanceOrder;
