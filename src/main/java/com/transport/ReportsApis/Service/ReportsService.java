@@ -295,10 +295,18 @@ public class ReportsService{
                         objectMapper.readValue(report.getVehicleLocations(),
                                 new TypeReference<List<Map<String, Object>>>() {});
 
-                // 🔹 filter logic
-                response.setMetrics(filterBySiteAndDate(metrics, site, date, dateFrom, dateTo));
-                response.setActiveRoutes(filterBySiteAndDate(activeRoutes, site, date, dateFrom, dateTo));
-                response.setVehicleLocations(filterBySiteAndDate(vehicleLocations, site, date, dateFrom, dateTo));
+                // 🔹 filter + aggregate metrics
+                List<Map<String, Object>> filteredMetrics =
+                        filterBySiteAndDate(metrics, site, date, dateFrom, dateTo);
+
+                response.setMetrics(aggregateMetrics(filteredMetrics));
+
+                // 🔹 others only filter
+                response.setActiveRoutes(
+                        filterBySiteAndDate(activeRoutes, site, date, dateFrom, dateTo));
+
+                response.setVehicleLocations(
+                        filterBySiteAndDate(vehicleLocations, site, date, dateFrom, dateTo));
 
             } catch (Exception e) {
                 throw new RuntimeException("Error parsing dashboard JSON", e);
@@ -308,7 +316,48 @@ public class ReportsService{
         }).toList();
     }
 
-    private List<Map<String, Object>> filterBySiteAndDate(
+    private List<Map<String, Object>> aggregateMetrics(List<Map<String, Object>> metrics) {
+
+        Map<String, Map<String, Object>> grouped = new LinkedHashMap<>();
+
+        for (Map<String, Object> item : metrics) {
+
+            String title = (String) item.get("title");
+            Integer value = ((Number) item.get("value")).intValue();
+
+            if (!grouped.containsKey(title)) {
+                grouped.put(title, new HashMap<>(item));
+            } else {
+                Map<String, Object> existing = grouped.get(title);
+                Integer existingValue = ((Number) existing.get("value")).intValue();
+                existing.put("value", existingValue + value);
+            }
+        }
+
+        // ensure all 5 metrics always present
+        String[] requiredTitles = {
+                "Total Vehicles",
+                "Orders Pending",
+                "Orders Delivered",
+                "Drivers Available",
+                "Vehicles Available"
+        };
+
+        for (String title : requiredTitles) {
+            if (!grouped.containsKey(title)) {
+                Map<String, Object> empty = new HashMap<>();
+                empty.put("title", title);
+                empty.put("value", 0);
+                empty.put("icon", "");
+                empty.put("trend_value", "");
+                empty.put("trend_positive", 0);
+                empty.put("status", "");
+                grouped.put(title, empty);
+            }
+        }
+
+        return new ArrayList<>(grouped.values());
+    }    private List<Map<String, Object>> filterBySiteAndDate(
             List<Map<String, Object>> data,
             List<String> sites,
             Date date,
@@ -317,26 +366,26 @@ public class ReportsService{
 
         return data.stream().filter(item -> {
 
-            String itemSite = (String) item.get("site");
-            String reportDate = (String) item.get("report_date");
+            String itemSite = item.get("site") == null ? null : item.get("site").toString();
+            String reportDate = item.get("report_date") == null ? null : item.get("report_date").toString();
 
             boolean siteMatch = true;
             boolean dateMatch = true;
 
             // site filter
-            if (sites != null && !sites.isEmpty()) {
+            if (sites != null && !sites.isEmpty() && itemSite != null) {
                 siteMatch = sites.contains(itemSite);
             }
 
             // date filter
-            if (date != null) {
+            if (date != null && reportDate != null) {
                 dateMatch = reportDate.equals(
                         new java.text.SimpleDateFormat("yyyy-MM-dd").format(date)
                 );
             }
 
             // date range filter
-            if (dateFrom != null && dateTo != null) {
+            if (dateFrom != null && dateTo != null && reportDate != null) {
                 try {
                     Date itemDate = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(reportDate);
                     dateMatch = !itemDate.before(dateFrom) && !itemDate.after(dateTo);
