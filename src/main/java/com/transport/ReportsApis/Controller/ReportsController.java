@@ -61,12 +61,8 @@ public class ReportsController {
     }
 
     @GetMapping("/dashboard")
-    public DashboardReportResponse getDashboardReport(
-            @RequestParam(name = "site", required = false) List<String> site,
-            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
-            @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
-            @RequestParam(name = "dateTo", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
-        return reportsService.getDashboardReport(site, date, dateFrom, dateTo);
+    public List<DashboardReportResponse> getDashboardReport(@RequestParam(name = "site", required = false) List<String> site) {
+        return reportsService.getDashboardReport(site);
     }
 
     @GetMapping("/orderDetail")
