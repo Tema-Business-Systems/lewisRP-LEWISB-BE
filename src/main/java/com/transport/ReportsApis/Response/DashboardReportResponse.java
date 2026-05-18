@@ -6,7 +6,7 @@ import java.util.Map;
 
 @Data
 public class DashboardReportResponse {
-    private List<Map<String, Object>> metrics;
-    private List<Map<String, Object>> activeRoutes;
-    private List<Map<String, Object>> vehicleLocations;
+    private List<DashboardMetricDTO> metrics;
+    private List<ActiveRouteDTO> activeRoutes;
+    private List<VehicleLocationDTO> vehicleLocations;
 }

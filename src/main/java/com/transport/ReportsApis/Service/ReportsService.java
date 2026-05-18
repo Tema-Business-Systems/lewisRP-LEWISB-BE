@@ -273,133 +273,110 @@ public class ReportsService{
 //        }).toList();
 //    }
 
-    public List<DashboardReportResponse> getDashboardReport(
-            List<String> site,
-            Date date,
-            Date dateFrom,
-            Date dateTo) {
+    public DashboardReportResponse getDashboardReport(
+            List<String> site, Date date, Date dateFrom, Date dateTo) {
 
-        List<DashboardReport> reports = dashRepository.findAll();
+        List<DashboardReport> data = dashRepository.findAll(
+                DashboardSpecification.filter(site, date, dateFrom, dateTo)
+        );
 
-        return reports.stream().map(report -> {
-            DashboardReportResponse response = new DashboardReportResponse();
-            try {
+        DashboardReportResponse response = new DashboardReportResponse();
 
-                List<Map<String, Object>> metrics =
-                        objectMapper.readValue(report.getMetrics(),
-                                new TypeReference<List<Map<String, Object>>>() {});
+        // =========================
+        // ✅ METRICS (CORRECT AGGREGATION)
+        // =========================
+        Map<String, Integer> metricSumMap = new LinkedHashMap<>();
+        Map<String, String> statusMap = new HashMap<>();
 
-                List<Map<String, Object>> activeRoutes =
-                        objectMapper.readValue(report.getActiveRoutes(),
-                                new TypeReference<List<Map<String, Object>>>() {});
+        for (DashboardReport d : data) {
 
-                List<Map<String, Object>> vehicleLocations =
-                        objectMapper.readValue(report.getVehicleLocations(),
-                                new TypeReference<List<Map<String, Object>>>() {});
+            if ("metrics".equalsIgnoreCase(d.getDataset())) {
 
-                // 🔹 filter + aggregate metrics
-                List<Map<String, Object>> filteredMetrics =
-                        filterBySiteAndDate(metrics, site, date, dateFrom, dateTo);
+                // ⚠️ IMPORTANT: avoid summing duplicates blindly
+                // your view already gives aggregated values per site
+                // so just take latest OR sum carefully
 
-                response.setMetrics(aggregateMetrics(filteredMetrics));
-
-                // 🔹 others only filter
-                response.setActiveRoutes(
-                        filterBySiteAndDate(activeRoutes, site, date, dateFrom, dateTo));
-
-                response.setVehicleLocations(
-                        filterBySiteAndDate(vehicleLocations, site, date, dateFrom, dateTo));
-
-            } catch (Exception e) {
-                throw new RuntimeException("Error parsing dashboard JSON", e);
-            }
-            return response;
-
-        }).toList();
-    }
-
-    private List<Map<String, Object>> aggregateMetrics(List<Map<String, Object>> metrics) {
-        Map<String, Map<String, Object>> grouped = new LinkedHashMap<>();
-        for (Map<String, Object> item : metrics) {
-            String title = (String) item.get("title");
-            Integer value = ((Number) item.get("value")).intValue();
-
-            if (!grouped.containsKey(title)) {
-                grouped.put(title, new HashMap<>(item));
-            } else {
-                Map<String, Object> existing = grouped.get(title);
-                Integer existingValue = ((Number) existing.get("value")).intValue();
-                existing.put("value", existingValue + value);
-            }
-        }
-
-        // ensure all metrics always present
-        String[] requiredTitles = {
-                "Total Vehicles",
-                "Active Routes",
-                "Orders Pending",
-                "Orders Delivered",
-                "Drivers Available",
-                "Vehicles Available"
-        };
-
-        for (String title : requiredTitles) {
-            if (!grouped.containsKey(title)) {
-                Map<String, Object> empty = new HashMap<>();
-                empty.put("title", title);
-                empty.put("value", 0);
-                empty.put("icon", "");
-                empty.put("trend_value", "");
-                empty.put("trend_positive", 0);
-                empty.put("status", "");
-                grouped.put(title, empty);
-            }
-        }
-
-        return new ArrayList<>(grouped.values());
-    }
-    private List<Map<String, Object>> filterBySiteAndDate(
-            List<Map<String, Object>> data,
-            List<String> sites,
-            Date date,
-            Date dateFrom,
-            Date dateTo) {
-
-        return data.stream().filter(item -> {
-
-            String itemSite = item.get("site") == null ? null : item.get("site").toString();
-            String reportDate = item.get("report_date") == null ? null : item.get("report_date").toString();
-
-            boolean siteMatch = true;
-            boolean dateMatch = true;
-
-            // site filter
-            if (sites != null && !sites.isEmpty() && itemSite != null) {
-                siteMatch = sites.contains(itemSite);
-            }
-
-            // date filter
-            if (date != null && reportDate != null) {
-                dateMatch = reportDate.equals(
-                        new java.text.SimpleDateFormat("yyyy-MM-dd").format(date)
+                metricSumMap.merge(
+                        d.getTitle(),
+                        d.getValue() != null ? d.getValue() : 0,
+                        Integer::sum
                 );
-            }
 
-            // date range filter
-            if (dateFrom != null && dateTo != null && reportDate != null) {
-                try {
-                    Date itemDate = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(reportDate);
-                    dateMatch = !itemDate.before(dateFrom) && !itemDate.after(dateTo);
-                } catch (Exception e) {
-                    return false;
+                statusMap.putIfAbsent(d.getTitle(), d.getStatus());
+            }
+        }
+
+        List<DashboardMetricDTO> metrics = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : metricSumMap.entrySet()) {
+
+            DashboardMetricDTO m = new DashboardMetricDTO();
+            m.setTitle(entry.getKey());
+            m.setValue(entry.getValue());
+            m.setStatus(statusMap.get(entry.getKey()));
+
+            metrics.add(m);
+        }
+
+        // =========================
+        // ✅ ACTIVE ROUTES (FIXED)
+        // =========================
+        Map<String, ActiveRouteDTO> routeMap = new LinkedHashMap<>();
+
+        for (DashboardReport d : data) {
+
+            if ("routes".equalsIgnoreCase(d.getDataset())) {
+
+                // unique by vehicle
+                String key = d.getIcon();
+
+                if (!routeMap.containsKey(key)) {
+                    ActiveRouteDTO a = new ActiveRouteDTO();
+
+                    a.setVehicle(d.getIcon());        // VEHICLE
+                    a.setDriver(d.getTrendValue());   // DRIVER
+
+                    routeMap.put(key, a);
                 }
             }
+        }
 
-            return siteMatch && dateMatch;
+        List<ActiveRouteDTO> activeRoutes = new ArrayList<>(routeMap.values());
 
-        }).toList();
+        // =========================
+        // ✅ VEHICLE LOCATIONS (FIXED MAPPING)
+        // =========================
+        Map<String, VehicleLocationDTO> locationMap = new LinkedHashMap<>();
+
+        for (DashboardReport d : data) {
+
+            if ("locations".equalsIgnoreCase(d.getDataset())) {
+
+                // unique by vehicle
+                String key = d.getIcon();
+
+                if (!locationMap.containsKey(key)) {
+
+                    VehicleLocationDTO v = new VehicleLocationDTO();
+
+                    v.setVehicleId(d.getIcon());       // ✅ VEHICLE
+                    v.setDriver(d.getTrendValue());    // ✅ DRIVER
+
+                    locationMap.put(key, v);
+                }
+            }
+        }
+
+        List<VehicleLocationDTO> locations = new ArrayList<>(locationMap.values());
+
+        // =========================
+        // ✅ FINAL RESPONSE
+        // =========================
+        response.setMetrics(metrics);
+        response.setActiveRoutes(activeRoutes);
+        response.setVehicleLocations(locations);
+
+        return response;
     }
-
 //    public List<OrderCalendarDTO> getAllOrders(Date date, Date dateFrom, Date dateTo) {
 //        List<OrderCalendar> orders;
 //        if (date == null && dateFrom == null && dateTo == null) {

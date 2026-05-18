@@ -1,20 +1,35 @@
 package com.transport.ReportsApis.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+import java.util.Date;
+
 @Entity
 @Table(name = "vw_DashboardReport", schema = "LEWISB")
+@Getter
+@Setter
 public class DashboardReport {
+
     @Id
-    @Column(name = "metrics")
-    private String metrics;
-    @Column(name = "activeRoutes")
-    private String activeRoutes;
-    @Column(name = "vehicleLocations")
-    private String vehicleLocations;
+    @Column(name = "site")
+    private String site;   // ⚠️ fake ID (OK for read-only)
+    @Column(name = "report_date")
+    @Temporal(TemporalType.DATE)
+    private Date reportDate;
+    @Column(name = "title")
+    private String title;
+    @Column(name = "value")
+    private Integer value;
+    @Column(name = "icon")
+    private String icon;
+    @Column(name = "trend_value")
+    private String trendValue;
+    @Column(name = "trend_positive")
+    private Integer trendPositive;
+    @Column(name = "status")
+    private String status;
+    @Column(name = "dataset")
+    private String dataset;
 }
