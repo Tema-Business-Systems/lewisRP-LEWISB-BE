@@ -22,7 +22,8 @@ public class GlobalCorsConfig {
                                 "http://tmssolutions.tema-systems.com:8048",
                                 "https://tmssolutions.tema-systems.com:8049",
                                 "https://tmssolutions.tema-systems.com:8048",
-                                "http://tmssolutions.tema-systems.com:8050"
+                                "http://tmssolutions.tema-systems.com:8050",
+                                "http://192.168.0.181:3000"
                         )
                         .allowedMethods("*")
                         .allowedHeaders("*")
