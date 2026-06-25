@@ -273,7 +273,7 @@ public class ReportsService{
 //        }).toList();
 //    }
 
-    public List<DashboardReportResponse> getDashboardReport(String site) {
+    public List<DashboardReportResponse> getDashboardReport(List<String> site) {
         return dashRepository.getDashboardReport(site);
     }
 //    public List<OrderCalendarDTO> getAllOrders(Date date, Date dateFrom, Date dateTo) {

@@ -61,7 +61,7 @@ public class ReportsController {
     }
 
     @GetMapping("/dashboard")
-    public List<DashboardReportResponse> getDashboardReport(@RequestParam(name = "site") String site) {
+    public List<DashboardReportResponse> getDashboardReport(@RequestParam(name = "site") List<String> site) {
         return reportsService.getDashboardReport(site);
     }
 

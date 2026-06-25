@@ -16,7 +16,7 @@ public class DashboardReportRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<DashboardReportResponse> getDashboardReport(String site) {
+    public List<DashboardReportResponse> getDashboardReport(List<String> site) {
 
         StringBuilder sql = new StringBuilder("""
         SELECT
@@ -31,15 +31,15 @@ public class DashboardReportRepository {
         FROM LEWISB.vw_DashboardReport
     """);
 
-//        if (site != null && !site.isEmpty()) {
-//            String inSql = String.join(",", site.stream().map(s -> "'" + s + "'").toList());
-//            sql.append(" WHERE site IN (").append(inSql).append(") ");
-//        }
-//
-//        sql.append(" ORDER BY dataset, title ");
-        sql.append(" WHERE site = '").append(site).append("' ");
+        if (site != null && !site.isEmpty()) {
+            String inSql = String.join(",", site.stream().map(s -> "'" + s + "'").toList());
+            sql.append(" WHERE site IN (").append(inSql).append(") ");
+        }
 
         sql.append(" ORDER BY dataset, title ");
+//        sql.append(" WHERE site = '").append(site).append("' ");
+//
+//        sql.append(" ORDER BY dataset, title ");
 
         return jdbcTemplate.query(
                 sql.toString(),
