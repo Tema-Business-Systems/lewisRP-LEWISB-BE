@@ -16,10 +16,10 @@ public class CustomerServiceLog {
     @Column(name = "CUSTOMER")
     private String customer;
 
-    @Column(name="CUSTOMER_NO")
+    @Column(name= "CUSTOMER_NO")
     private String customerNo;
 
-    @Column(name="STORE_NO")
+    @Column(name= "STORE_NO")
     private String storeNo;
 
     @Column(name = "ACCOUNT_TYPE")
