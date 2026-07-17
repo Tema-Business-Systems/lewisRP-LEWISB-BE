@@ -35,6 +35,8 @@ public class PodTracking {
     private String bpName;
     @Column(name = "city")
     private String city;
+    @Column(name="category")
+    private String category;
     @Column(name = "state")
     private String state;
     @Column(name = "deliveryMode")

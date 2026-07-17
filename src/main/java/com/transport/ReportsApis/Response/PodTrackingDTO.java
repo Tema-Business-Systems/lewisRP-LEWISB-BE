@@ -22,6 +22,7 @@ public class PodTrackingDTO {
     private String bpName;
     private String city;
     private String state;
+    private String category;
     private String deliveryMode;
     private Integer pack;
     private Integer weight;

@@ -174,6 +174,7 @@ public class ReportsService{
 //        }).toList();
 //    }
 
+
     public List<PodTrackingDTO> getPodTracking() {
         List<PodTracking> list = repository.findAll();
         return list.stream().map(p -> {
@@ -189,6 +190,7 @@ public class ReportsService{
             );
             return dto;
         }).toList();
+
     }
 
     public RouteListResponse getRouteList() {
@@ -478,6 +480,8 @@ public class ReportsService{
                     CustomerServiceDetailsDTO dto = new CustomerServiceDetailsDTO();
                     dto.setAccountNo(d.getAcctNo());
                     dto.setCustomer(d.getCustomer());
+                    dto.setCustomerNo(d.getCustomerNo());
+                    dto.setStoreNo(d.getStoreNo());
                     dto.setAccountType(d.getAccountType());
                     dto.setDriver(d.getDriver());
                     dto.setDriverName(d.getDriverName());

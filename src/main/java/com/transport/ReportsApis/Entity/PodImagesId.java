@@ -6,11 +6,11 @@ import java.util.Objects;
 public class PodImagesId implements Serializable {
 
     private String document;
-    private Integer contentUrl;
+    private String contentUrl;
 
     public PodImagesId() {}
 
-    public PodImagesId(String document, Integer contentUrl) {
+    public PodImagesId(String document, String contentUrl) {
         this.document = document;
         this.contentUrl = contentUrl;
     }

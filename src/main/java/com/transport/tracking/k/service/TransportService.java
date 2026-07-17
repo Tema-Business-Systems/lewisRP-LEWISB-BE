@@ -189,6 +189,7 @@
 
         public List<SiteVO> getSites() {
             List<Facility> facilities = facilityRepository.findByFcyNumberOrderByFcynamAsc(2);
+//            List<Facility> facilities = facilityRepository.findByFcyNumberOrderByFcynamAsc();
             List<SiteVO> list = new ArrayList<>();
             List<String> ids = new ArrayList<>();
             for (Facility facility : facilities) {

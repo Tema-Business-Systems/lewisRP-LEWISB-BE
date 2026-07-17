@@ -175,6 +175,7 @@ public class ReportService {
 
     public List<SiteVO> getSites() {
         List<Facility> facilities = facilityRepository.findByFcyNumberOrderByFcynamAsc(2);
+//      List <Facility> facilities= facilityRepository.findByOrderByFcynamAsc();
         List<SiteVO> list = new ArrayList<>();
         List<String> ids = new ArrayList<>();
         for (Facility facility : facilities) {

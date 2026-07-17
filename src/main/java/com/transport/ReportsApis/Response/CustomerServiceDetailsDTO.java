@@ -5,7 +5,9 @@ import lombok.Data;
 @Data
 public class CustomerServiceDetailsDTO {
     private String accountNo;
+    private String customerNo;
     private String customer;
+    private String storeNo;
     private String accountType;
     private String driver;
     private String driverName;
