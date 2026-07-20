@@ -105,7 +105,9 @@ public class UserService {
                     dto.setEmail(user.getEmail());
                     dto.setLngmain(user.getLngmain());
                     dto.setLansec(user.getLansec());
-                    dto.setRole(1);
+//                    dto.setRole(1);
+                    String role= user.getRole();
+                    dto.setRole(role == null || role.isBlank() || role.isEmpty() ? "USER" : role);
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -170,6 +172,7 @@ public class UserService {
         user.setUsermgmtflg(userDetails.getUsermgmtflg());
         user.setXpswd(userDetails.getXpswd());
         user.setXact(userDetails.getXact());
+        user.setRole(userDetails.getRole());
         user.setUpddattim(new Date());
         user.setAuuid(uuidToBytes(UUID.randomUUID()));
         List<String> existingSites = new ArrayList<>();

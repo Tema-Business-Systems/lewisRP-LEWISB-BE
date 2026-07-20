@@ -12,5 +12,5 @@ public class UserDTO {
     private String email;
     private String lngmain;
     private String lansec;
-    private int role;
+    private String role;
 }

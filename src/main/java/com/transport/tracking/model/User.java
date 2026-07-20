@@ -80,6 +80,8 @@ public class User {
       private int addPicktcktflg;
       @Column(name= "XRMPCKFLG_0")
       private int removePicktcktflg;
+      @Column(name="XROLE_0")
+      private String role;
 
       @Column(name = "ROWID", insertable = false, updatable = false)
       private String rowid;
