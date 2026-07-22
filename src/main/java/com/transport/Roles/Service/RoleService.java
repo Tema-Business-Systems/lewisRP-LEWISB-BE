@@ -34,13 +34,13 @@ public class RoleService {
 
     public ResponseEntity<?> createRole(RoleVO role) {
 
-        if (role.getXrolcode() != null && role.getXactive() != null) {
+        if (role.getXrolcode() != null ) {
             Role r = new Role();
             r.setXrolid(UUID.randomUUID().toString());
             r.setUpdtick(1);
             r.setXrolcode(role.getXrolcode());
             r.setXrolname(role.getXrolname());
-            r.setActive(role.getXactive());
+            r.setXactive(role.getXactive());
             r.setAuuid(uuidToBytes(UUID.randomUUID()));
             r.setCreusr(role.getCreusr());
             r.setUpdusr(role.getUpdusr());
@@ -50,7 +50,7 @@ public class RoleService {
             return ResponseEntity.status(HttpStatus.CREATED).body("Successfully Created Role");
         } else {
 
-            return new ResponseEntity<>("xrolcode and active are required.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("xrolcode are required.", HttpStatus.BAD_REQUEST);
 
         }
 
@@ -75,7 +75,9 @@ public class RoleService {
                     vo.setXrolid(r.getXrolid());
                     vo.setXrolcode(r.getXrolcode());
                     vo.setXrolname(r.getXrolname());
-                    vo.setXactive(Integer.valueOf(1).equals(r.isActive()));
+                    vo.setXactive(r.getXactive());
+//                    vo.setXactive(r.isXactive());
+//                    vo.setXactive(Integer.valueOf(1).equals(r.get));
                     vo.setUpdtick(r.getUpdtick());
                     vo.setCreusr(r.getCreusr());
                     vo.setUpdusr(r.getUpdusr());
@@ -94,7 +96,7 @@ public class RoleService {
                 .orElseThrow(() -> new RuntimeException("Role not found with id : " + roleId));
         role.setXrolcode(roleVO.getXrolcode());
         role.setXrolname(roleVO.getXrolname());
-        role.setActive(roleVO.getXactive());
+        role.setXactive(roleVO.getXactive());
         role.setUpdusr(roleVO.getUpdusr());
         role.setUpddattim(new Timestamp(System.currentTimeMillis()));
         if (role.getUpdtick() == 0) {
@@ -108,7 +110,9 @@ public class RoleService {
         response.setXrolid(updatedRole.getXrolid());
         response.setXrolcode(updatedRole.getXrolcode());
         response.setXrolname(updatedRole.getXrolname());
-        response.setXactive(Integer.valueOf(1).equals(updatedRole.isActive()));
+//        response.setXactive(Integer.valueOf(1).equals(updatedRole.isXactive()));
+//        response.setXactive(Integer.valueOf(1).equals(updatedRole.get));
+        response.setXactive(updatedRole.getXactive());
         response.setUpdtick(updatedRole.getUpdtick());
         response.setCreusr(updatedRole.getCreusr());
         response.setUpdusr(updatedRole.getUpdusr());

@@ -24,7 +24,7 @@ public class RoleVO {
     private String xrolid;
     private String xrolcode;
     private String xrolname;
-    private Boolean xactive;
+    private int xactive;
     private byte[] auuid;
     private Date credattim;
     private Date upddattim;

@@ -11,7 +11,9 @@
 //import java.math.BigDecimal;
 //import java.util.Date;
 //import java.util.UUID;
-//
+
+//Note already below table using please don't use these below table and class
+
 //@Getter
 //@Setter
 //@Entity

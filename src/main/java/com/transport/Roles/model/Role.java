@@ -25,7 +25,7 @@ import java.util.UUID;
         @Column(name="XROLNAME_0")
         private String xrolname;
         @Column(name="XROLACTIVE_0")
-        private boolean active;
+        private int xactive;
         @Column(name= "AUUID_0")
         private byte[] auuid;
         @Column(name= "CREDATTIM_0")
