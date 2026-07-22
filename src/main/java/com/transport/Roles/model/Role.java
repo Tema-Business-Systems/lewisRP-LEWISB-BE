@@ -15,17 +15,19 @@ import java.util.UUID;
     public class Role {
 
         @Column(name= "UPDTICK_0")
-        private Integer updtick;
+        private int updtick;
         @Id
-        @GeneratedValue(strategy = GenerationType.UUID)
+//        @GeneratedValue(strategy = GenerationType.UUID)
         @Column(name= "XROLID_0", nullable = false)
-        private UUID xrolid;
+        private String xrolid;
         @Column(name="XROLCODE_0", unique=true, nullable=false)
         private String xrolcode;
         @Column(name="XROLNAME_0")
         private String xrolname;
         @Column(name="XROLACTIVE_0")
         private boolean active;
+        @Column(name= "AUUID_0")
+        private byte[] auuid;
         @Column(name= "CREDATTIM_0")
         private Date credattim;
         @Column(name= "UPDDATTIM_0")
@@ -34,7 +36,7 @@ import java.util.UUID;
         private String creusr;
         @Column(name= "UPDUSR_0")
         private String updusr;
-        @Column(name= "ROWID")
+        @Column(name= "ROWID", insertable = false, updatable = false)
         private BigDecimal rowid;
 
 

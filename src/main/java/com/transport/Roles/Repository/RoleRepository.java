@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface RoleRepository  extends CrudRepository<Role,UUID> {
-    public List<Role> findAll();
+public interface RoleRepository  extends CrudRepository<Role,String> {
+    List <Role> findAll();
+
 }

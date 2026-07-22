@@ -18,18 +18,19 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoleVO {
-    private Integer updtick;
-    private UUID xrolid;
+    private int updtick;
+    private String xrolid;
     private String xrolcode;
     private String xrolname;
     private Boolean xactive;
+    private byte[] auuid;
     private Date credattim;
     private Date upddattim;
     private String creusr;
     private String updusr;
     private BigDecimal rowid;
 //    private String xdesc;
-//     private byte[] auuid;
+
 }

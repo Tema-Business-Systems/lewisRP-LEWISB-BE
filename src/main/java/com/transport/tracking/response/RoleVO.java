@@ -12,7 +12,7 @@ import java.util.Date;
 public class RoleVO {
 
       private int updtick;
-      private int xrolid;
+      private String xrolid;
       private String xdesc;
       private Date credattim;
       private Date upddattim;
