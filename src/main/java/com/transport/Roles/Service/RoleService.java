@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,15 @@ public class RoleService {
     }
 
     public ResponseEntity<?> createRole(RoleVO role) {
+
+        if (role.getXrolcode() == null || role.getXrolcode().isEmpty()) {
+            return new ResponseEntity<>("xrolcode is required.", HttpStatus.BAD_REQUEST);
+        }
+        Optional<Role> existingRoleCode = roleRepo.findByXrolcode(role.getXrolcode());
+
+        if (existingRoleCode.isPresent()) {
+            return new ResponseEntity<>("Role code already exists.", HttpStatus.CONFLICT);
+        }
 
         if (role.getXrolcode() != null ) {
             Role r = new Role();
