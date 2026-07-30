@@ -7,9 +7,12 @@ import com.transport.Roles.model.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponse;
+
 import java.sql.Timestamp;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,13 +38,18 @@ public class RoleService {
 
     public ResponseEntity<?> createRole(RoleVO role) {
 
+      HashMap<String,String> hs=  new HashMap<>();
         if (role.getXrolcode() == null || role.getXrolcode().isEmpty()) {
-            return new ResponseEntity<>("xrolcode is required.", HttpStatus.BAD_REQUEST);
+            hs.put("message","xrolcode are required.");
+            return new ResponseEntity<>(hs,HttpStatus.BAD_REQUEST);
+//            return new ResponseEntity<>("xrolcode is required.", HttpStatus.BAD_REQUEST);
         }
         Optional<Role> existingRoleCode = roleRepo.findByXrolcode(role.getXrolcode());
 
         if (existingRoleCode.isPresent()) {
-            return new ResponseEntity<>("Role code already exists.", HttpStatus.CONFLICT);
+//            return new ResponseEntity<>("Role code already exists.", HttpStatus.CONFLICT);
+            hs.put("message","Role code already exists.");
+            return new ResponseEntity<>(hs, HttpStatus.CONFLICT);
         }
 
         if (role.getXrolcode() != null ) {
@@ -57,10 +65,14 @@ public class RoleService {
             r.setCredattim(role.getCredattim());
             r.setUpddattim(role.getUpddattim());
             Role savedRole = roleRepo.save(r);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Successfully Created Role");
-        } else {
 
-            return new ResponseEntity<>("xrolcode are required.", HttpStatus.BAD_REQUEST);
+            hs.put("message","Successfully Created Role.");
+            return new ResponseEntity<>(hs,HttpStatus.CREATED);
+//            return ResponseEntity.status(HttpStatus.CREATED).body("Successfully Created Role");
+        } else {
+            hs.put("message","xrolcode are required.");
+            return new ResponseEntity<>(hs,HttpStatus.BAD_REQUEST);
+//            return new ResponseEntity<>("xrolcode are required.", HttpStatus.BAD_REQUEST);
 
         }
 
