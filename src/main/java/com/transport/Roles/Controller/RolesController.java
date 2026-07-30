@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.transport.Roles.Service.*;
 import com.transport.Roles.Response.RoleVO;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,11 +36,19 @@ public class RolesController {
 
     @DeleteMapping("/deleteRole/{roleId}")
     public ResponseEntity<?> deletionRole(@PathVariable String roleId) {
+        HashMap<String,Object> hs=  new HashMap<>();
         try {
             roleService.deleteRole(roleId);
-            return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
+            hs.put("message","Role deleted successfully");
+            hs.put("status", HttpStatus.OK.value());
+            hs.put("data",null);
+            return new ResponseEntity<>(hs,HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            hs.put("message","Role not found with id :" +roleId);
+            hs.put("status", HttpStatus.NOT_FOUND.value());
+            hs.put("data",null);
+            return new ResponseEntity<>(hs,HttpStatus.BAD_REQUEST);
+
         }
 
 
@@ -47,11 +56,14 @@ public class RolesController {
 
     @PutMapping("/updateRole/{roleId}")
     public ResponseEntity<?> updationRole(@PathVariable String roleId, @RequestBody RoleVO roleVO) {
+        HashMap<String,Object> hs=  new HashMap<>();
         try {
            return roleService.updateRole(roleId, roleVO);
-//            return new ResponseEntity<>("Role updated successfully", HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            hs.put("message",e.getMessage());
+            hs.put("status", HttpStatus.NOT_FOUND.value());
+            hs.put("data",null);
+            return new ResponseEntity<>(hs,HttpStatus.NOT_FOUND);
         }
     }
 

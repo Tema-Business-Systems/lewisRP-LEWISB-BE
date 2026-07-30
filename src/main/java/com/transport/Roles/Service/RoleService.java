@@ -26,7 +26,11 @@ public class RoleService {
 
     private RoleService(RoleRepository roleRepo) {
         this.roleRepo = roleRepo;
+
+
     }
+
+
 
 
     private byte[] uuidToBytes(UUID uuid) {
@@ -38,17 +42,19 @@ public class RoleService {
 
     public ResponseEntity<?> createRole(RoleVO role) {
 
-      HashMap<String,String> hs=  new HashMap<>();
+        HashMap<String,Object> hs=  new HashMap<>();
         if (role.getXrolcode() == null || role.getXrolcode().isEmpty()) {
             hs.put("message","xrolcode are required.");
+            hs.put("status", HttpStatus.BAD_REQUEST.value());
+            hs.put("data",null);
             return new ResponseEntity<>(hs,HttpStatus.BAD_REQUEST);
-//            return new ResponseEntity<>("xrolcode is required.", HttpStatus.BAD_REQUEST);
         }
         Optional<Role> existingRoleCode = roleRepo.findByXrolcode(role.getXrolcode());
 
         if (existingRoleCode.isPresent()) {
-//            return new ResponseEntity<>("Role code already exists.", HttpStatus.CONFLICT);
             hs.put("message","Role code already exists.");
+            hs.put("status", HttpStatus.CONFLICT.value());
+            hs.put("data",null);
             return new ResponseEntity<>(hs, HttpStatus.CONFLICT);
         }
 
@@ -67,13 +73,14 @@ public class RoleService {
             Role savedRole = roleRepo.save(r);
 
             hs.put("message","Successfully Created Role.");
+            hs.put("status", HttpStatus.CREATED.value());
+            hs.put("data",null);
             return new ResponseEntity<>(hs,HttpStatus.CREATED);
-//            return ResponseEntity.status(HttpStatus.CREATED).body("Successfully Created Role");
         } else {
             hs.put("message","xrolcode are required.");
+            hs.put("status", HttpStatus.BAD_REQUEST.value());
+            hs.put("data",null);
             return new ResponseEntity<>(hs,HttpStatus.BAD_REQUEST);
-//            return new ResponseEntity<>("xrolcode are required.", HttpStatus.BAD_REQUEST);
-
         }
 
     }
@@ -83,7 +90,7 @@ public class RoleService {
         if(!roleRepo.existsById(roleId)){
             throw new RuntimeException("Role not found with id : " + roleId);
         }
-            roleRepo.deleteById(roleId);
+           roleRepo.deleteById(roleId);
     }
 
 
@@ -114,6 +121,7 @@ public class RoleService {
 
 
     public ResponseEntity<?> updateRole(String roleId, RoleVO roleVO) {
+        HashMap<String,Object> hs=  new HashMap<>();
         Role role = roleRepo.findById(roleId)
                 .orElseThrow(() -> new RuntimeException("Role not found with id : " + roleId));
         role.setXrolcode(roleVO.getXrolcode());
@@ -140,7 +148,11 @@ public class RoleService {
         response.setUpdusr(updatedRole.getUpdusr());
         response.setCredattim(updatedRole.getCredattim());
         response.setUpddattim(updatedRole.getUpddattim());
-        return ResponseEntity.ok(response);
+
+        hs.put("message","Successfully Updated Role.");
+        hs.put("status", HttpStatus.OK.value());
+        hs.put("data",response);
+        return new ResponseEntity<>(hs,HttpStatus.OK);
     }
 
 
