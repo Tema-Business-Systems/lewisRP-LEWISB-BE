@@ -13,4 +13,5 @@ import java.util.UUID;
 public interface RoleRepository  extends CrudRepository<Role,String> {
     List <Role> findAll();
     Optional<Role> findByXrolcode(String xrolcode);
+    Optional<Role> findByXrolid(String xrolid);
 }
